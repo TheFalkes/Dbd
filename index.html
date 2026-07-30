@@ -12,6 +12,7 @@
       --accent-red: #d92b2b;
       --accent-orange: #e67e22;
       --accent-green: #2ecc71;
+      --accent-blue: #3498db;
       --text-color: #e0e0e0;
       --text-muted: #8e8e99;
       --border-color: #262630;
@@ -183,7 +184,7 @@
       overflow-y: auto;
     }
 
-    /* Custom Auto-complete Dropdown (Vrai menu déroulant sous l'input) */
+    /* Custom Dropdown */
     .dropdown-container {
       position: relative;
     }
@@ -301,6 +302,7 @@
     .radio-option input:checked + label.lbl-red { background: var(--accent-red); color: white; }
     .radio-option input:checked + label.lbl-orange { background: var(--accent-orange); color: white; }
     .radio-option input:checked + label.lbl-green { background: var(--accent-green); color: white; }
+    .radio-option input:checked + label.lbl-blue { background: var(--accent-blue); color: white; }
 
     .modal-actions {
       display: flex;
@@ -386,6 +388,69 @@
       padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;
     }
 
+    /* Stats Dashboard Styles */
+    .stats-dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .stat-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #fff;
+      margin-top: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .stat-section-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+    }
+
+    .stat-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .stat-table th, .stat-table td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .stat-table th {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
     .saved-items-list {
       list-style: none;
       margin-top: 10px;
@@ -418,6 +483,7 @@
 
   <h1>DBD Match Tracker</h1>
 
+  <!-- Streak Bar -->
   <div class="streak-container">
     <span class="streak-title">Derniers Matchs:</span>
     <div class="streak-dots" id="streak-dots">
@@ -425,6 +491,7 @@
     </div>
   </div>
 
+  <!-- Search & Category Navigation Bar -->
   <div class="search-box">
     <input type="text" id="search-bar" class="search-input" placeholder="🔍 Rechercher..." oninput="render()">
   </div>
@@ -438,33 +505,43 @@
 
   <button class="btn-main" onclick="openModal()">+ Ajouter une partie</button>
 
+  <!-- Tabs Navigation -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('all', event)">Tous</button>
     <button class="tab-btn" onclick="switchTab('green', event)">🟢 Porte</button>
     <button class="tab-btn" onclick="switchTab('orange', event)">🟠 Trappe</button>
     <button class="tab-btn" onclick="switchTab('red', event)">🔴 Non sorti</button>
+    <button class="tab-btn" style="border-color: var(--accent-blue); color: var(--accent-blue);" onclick="switchTab('stats', event)">📊 Stats</button>
   </div>
 
-  <div id="match-list" class="match-list"></div>
+  <!-- Main View (Matches List OR Stats) -->
+  <div id="main-container">
+    <div id="match-list" class="match-list"></div>
+    <div id="stats-view" class="stats-dashboard" style="display: none;"></div>
+  </div>
 
+  <!-- Modal Form Add/Edit -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <h2 id="modal-title" style="margin-bottom: 10px;">Nouvelle Partie</h2>
       <form id="match-form">
         <input type="hidden" id="match-id">
 
+        <!-- Survivant -->
         <div class="form-group dropdown-container">
           <label for="survivor">Survivant joué</label>
           <input type="text" id="survivor" placeholder="Sélectionnez ou tapez..." autocomplete="off">
           <div class="custom-dropdown-list" id="drop-survivor"></div>
         </div>
         
+        <!-- Tueur -->
         <div class="form-group dropdown-container">
           <label for="killer">Tueur</label>
           <input type="text" id="killer" required placeholder="Sélectionnez ou tapez..." autocomplete="off">
           <div class="custom-dropdown-list" id="drop-killer"></div>
         </div>
 
+        <!-- Map -->
         <div class="form-group dropdown-container">
           <label for="map">Map</label>
           <input type="text" id="map" placeholder="Sélectionnez ou tapez..." autocomplete="off">
@@ -482,6 +559,18 @@
           </div>
         </div>
 
+        <!-- Accrochages (Hooks) -->
+        <div class="form-group">
+          <label>Nombre d'accrochages (Hooks)</label>
+          <div class="radio-group">
+            <div class="radio-option"><input type="radio" id="hook-0" name="hooks" value="0" onchange="handleHookChange('0')"><label for="hook-0" class="lbl-blue">0 🪝</label></div>
+            <div class="radio-option"><input type="radio" id="hook-1" name="hooks" value="1" checked onchange="handleHookChange('1')"><label for="hook-1" class="lbl-blue">1 🪝</label></div>
+            <div class="radio-option"><input type="radio" id="hook-2" name="hooks" value="2" onchange="handleHookChange('2')"><label for="hook-2" class="lbl-blue">2 🪝</label></div>
+            <div class="radio-option"><input type="radio" id="hook-3" name="hooks" value="3" onchange="handleHookChange('3')"><label for="hook-3" class="lbl-blue">3+ 🪝</label></div>
+          </div>
+        </div>
+
+        <!-- Perks Section -->
         <div class="form-group">
           <label>Tes Perks (4 Emplacements)</label>
           <div class="perks-grid">
@@ -530,6 +619,7 @@
     </div>
   </div>
 
+  <!-- Modal Gestion par Onglet -->
   <div class="modal" id="cat-modal">
     <div class="modal-content">
       <h3 id="cat-title" style="margin-bottom:8px;">Gestion des éléments</h3>
@@ -545,32 +635,24 @@
   </div>
 
   <script>
-    // Storage Initialisation & Rétrocompatibilité
+    // Storage
     let matches = JSON.parse(localStorage.getItem('dbd_matches')) || [];
     let savedPerks = JSON.parse(localStorage.getItem('dbd_saved_perks')) || [];
     let savedSurvivors = JSON.parse(localStorage.getItem('dbd_saved_survivors')) || [];
     let savedKillers = JSON.parse(localStorage.getItem('dbd_saved_killers')) || [];
     let savedMaps = JSON.parse(localStorage.getItem('dbd_saved_maps')) || [];
 
-    // Extraction automatique des 50 anciennes parties enregistrées dans tes options
-    matches.forEach(m => {
-      if (m.survivor && !savedSurvivors.includes(m.survivor)) savedSurvivors.push(m.survivor);
-      if (m.killer && !savedKillers.includes(m.killer)) savedKillers.push(m.killer);
-      if (m.map && m.map !== 'Map non spécifiée' && !savedMaps.includes(m.map)) savedMaps.push(m.map);
-      if (m.perks && Array.isArray(m.perks)) {
-        m.perks.forEach(p => { if (p && !savedPerks.includes(p)) savedPerks.push(p); });
-      }
-    });
-
-    localStorage.setItem('dbd_saved_survivors', JSON.stringify(savedSurvivors));
-    localStorage.setItem('dbd_saved_killers', JSON.stringify(savedKillers));
-    localStorage.setItem('dbd_saved_maps', JSON.stringify(savedMaps));
-    localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
-
     let currentTab = 'all';
     let activeCategoryType = '';
 
-    // Gestion du VRAI Menu Déroulant (Dropdown Custom sur mesure)
+    // Règle 0 accrochage = Mort automatique
+    function handleHookChange(val) {
+      if (val === '0') {
+        document.getElementById('out-red').checked = true;
+      }
+    }
+
+    // Custom Dropdown Setup
     function setupCustomDropdown(inputId, dropId, itemsList) {
       const input = document.getElementById(inputId);
       const drop = document.getElementById(dropId);
@@ -626,7 +708,7 @@
       setupCustomDropdown('perk4', 'drop-perk4', savedPerks);
     }
 
-    /* Modal Gestion Catégories */
+    /* Modal Catégories */
     function openCategoryModal(type) {
       activeCategoryType = type;
       const titleMap = {
@@ -702,6 +784,7 @@
     function openModal(editId = null) {
       document.getElementById('match-form').reset();
       document.getElementById('match-id').value = '';
+      document.getElementById('hook-1').checked = true;
       closeAllDropdowns();
 
       if (editId) {
@@ -715,6 +798,11 @@
           document.getElementById('escaped').value = m.escaped;
           document.getElementById('notes').value = m.notes || '';
           document.querySelector(`input[name="status"][value="${m.status}"]`).checked = true;
+          
+          const hookVal = m.hooks !== undefined ? m.hooks : '1';
+          const hookRadio = document.querySelector(`input[name="hooks"][value="${hookVal}"]`);
+          if (hookRadio) hookRadio.checked = true;
+
           const p = m.perks || [];
           document.getElementById('perk1').value = p[0] || '';
           document.getElementById('perk2').value = p[1] || '';
@@ -739,6 +827,7 @@
       const map = document.getElementById('map').value.trim() || 'Map non spécifiée';
       const gens = document.getElementById('gens').value;
       const status = document.querySelector('input[name="status"]:checked').value;
+      const hooks = document.querySelector('input[name="hooks"]:checked').value;
       const escaped = document.getElementById('escaped').value;
       const notes = document.getElementById('notes').value.trim();
 
@@ -749,7 +838,6 @@
         document.getElementById('perk4').value.trim()
       ].filter(p => p !== '');
 
-      // Auto-Enregistrement
       if (survivor && !savedSurvivors.includes(survivor)) { savedSurvivors.push(survivor); saveArrayByType('survivors'); }
       if (killer && !savedKillers.includes(killer)) { savedKillers.push(killer); saveArrayByType('killers'); }
       if (map && map !== 'Map non spécifiée' && !savedMaps.includes(map)) { savedMaps.push(map); saveArrayByType('maps'); }
@@ -758,9 +846,9 @@
 
       if (id) {
         const idx = matches.findIndex(m => m.id === id);
-        if (idx !== -1) matches[idx] = { id, survivor, killer, map, gens, status, escaped, notes, perks };
+        if (idx !== -1) matches[idx] = { id, survivor, killer, map, gens, status, hooks, escaped, notes, perks };
       } else {
-        matches.unshift({ id: Date.now().toString(), survivor, killer, map, gens, status, escaped, notes, perks });
+        matches.unshift({ id: Date.now().toString(), survivor, killer, map, gens, status, hooks, escaped, notes, perks });
       }
 
       localStorage.setItem('dbd_matches', JSON.stringify(matches));
@@ -784,9 +872,21 @@
     }
 
     function render() {
+      const matchContainer = document.getElementById('match-list');
+      const statsContainer = document.getElementById('stats-view');
+
+      if (currentTab === 'stats') {
+        matchContainer.style.display = 'none';
+        statsContainer.style.display = 'flex';
+        renderStats();
+        return;
+      }
+
+      matchContainer.style.display = 'flex';
+      statsContainer.style.display = 'none';
+
       const searchQuery = document.getElementById('search-bar').value.toLowerCase();
-      const listContainer = document.getElementById('match-list');
-      listContainer.innerHTML = '';
+      matchContainer.innerHTML = '';
 
       // Streak Render
       const streakContainer = document.getElementById('streak-dots');
@@ -814,7 +914,7 @@
       });
 
       if (filtered.length === 0) {
-        listContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Aucun enregistrement.</div>';
+        matchContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Aucun enregistrement.</div>';
         return;
       }
 
@@ -833,12 +933,127 @@
           <div class="card-details">
             ${m.survivor ? `<span>👤 <b>${escapeHtml(m.survivor)}</b></span>` : ''}
             <span>⚡ Gen: <b>${m.gens}/5</b></span>
+            <span>🪝 Hooks: <b>${m.hooks !== undefined ? m.hooks : '-'}</b></span>
             <span>Résultat: <b>${statusText}</b></span>
           </div>
           ${m.perks && m.perks.length > 0 ? `<div class="card-perks-list">${m.perks.map(p => `<span class="card-perk-tag">${escapeHtml(p)}</span>`).join('')}</div>` : ''}
         `;
-        listContainer.appendChild(card);
+        matchContainer.appendChild(card);
       });
+    }
+
+    /* Rendu de l'Onglet Stats */
+    function renderStats() {
+      const statsContainer = document.getElementById('stats-view');
+      const total = matches.length;
+
+      if (total === 0) {
+        statsContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">Enregistrez quelques parties pour voir vos statistiques !</div>';
+        return;
+      }
+
+      const greenCount = matches.filter(m => m.status === 'green').length;
+      const orangeCount = matches.filter(m => m.status === 'orange').length;
+      const redCount = matches.filter(m => m.status === 'red').length;
+
+      const totalHooks = matches.reduce((acc, m) => acc + (parseInt(m.hooks) || 0), 0);
+      const avgHooks = (totalHooks / total).toFixed(1);
+
+      const escapeRate = (((greenCount + orangeCount) / total) * 100).toFixed(1);
+      const greenRate = ((greenCount / total) * 100).toFixed(1);
+      const orangeRate = ((orangeCount / total) * 100).toFixed(1);
+      const redRate = ((redCount / total) * 100).toFixed(1);
+
+      // Tueurs Stats
+      const killerCounts = {};
+      matches.forEach(m => {
+        const k = m.killer || 'Inconnu';
+        killerCounts[k] = (killerCounts[k] || 0) + 1;
+      });
+
+      const sortedKillers = Object.keys(killerCounts).sort((a, b) => killerCounts[b] - killerCounts[a]);
+
+      // Maps Stats
+      const mapCounts = {};
+      const mapEscapes = {};
+      matches.forEach(m => {
+        const map = m.map || 'Non spécifiée';
+        mapCounts[map] = (mapCounts[map] || 0) + 1;
+        if (m.status === 'green' || m.status === 'orange') {
+          mapEscapes[map] = (mapEscapes[map] || 0) + 1;
+        }
+      });
+      const sortedMaps = Object.keys(mapCounts).sort((a, b) => mapCounts[b] - mapCounts[a]).slice(0, 5);
+
+      statsContainer.innerHTML = `
+        <div class="stat-card-grid">
+          <div class="stat-box">
+            <div class="stat-label">Total Parties</div>
+            <div class="stat-value" style="color:var(--accent-blue);">${total}</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Évasion Globale</div>
+            <div class="stat-value" style="color:var(--accent-green);">${escapeRate}%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">🟢 Taux Porte</div>
+            <div class="stat-value">${greenRate}%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">🟠 Taux Trappe</div>
+            <div class="stat-value">${orangeRate}%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">🔴 Taux Mort</div>
+            <div class="stat-value" style="color:var(--accent-red);">${redRate}%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">🪝 Moy. Hooks / Match</div>
+            <div class="stat-value">${avgHooks}</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-section-title">🔪 Fréquence des Tueurs</div>
+          <table class="stat-table">
+            <thead>
+              <tr>
+                <th>Tueur</th>
+                <th>Rencontres</th>
+                <th>% Présence</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sortedKillers.map(k => {
+                const count = killerCounts[k];
+                const pct = ((count / total) * 100).toFixed(1);
+                return `<tr><td><b>${escapeHtml(k)}</b></td><td>${count} fois</td><td>${pct}%</td></tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div class="stat-section-title">🗺️ Top 5 Maps & Taux de Survie</div>
+          <table class="stat-table">
+            <thead>
+              <tr>
+                <th>Map</th>
+                <th>Jouées</th>
+                <th>Taux Survie</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sortedMaps.map(m => {
+                const count = mapCounts[m];
+                const esc = mapEscapes[m] || 0;
+                const pct = ((esc / count) * 100).toFixed(0);
+                return `<tr><td><b>${escapeHtml(m)}</b></td><td>${count}</td><td>${pct}%</td></tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
 
     function escapeHtml(text) {
