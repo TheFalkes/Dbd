@@ -97,7 +97,7 @@
     .streak-dot.orange { background: var(--accent-orange); }
     .streak-dot.red { background: var(--accent-red); }
 
-    /* Controls & Category Nav (Comme la photo) */
+    /* Controls */
     .search-box {
       margin-bottom: 8px;
     }
@@ -112,7 +112,6 @@
       font-size: 16px;
     }
 
-    /* Barre de catégories sous le champ de recherche (Inspiré de la photo) */
     .category-nav {
       display: flex;
       gap: 6px;
@@ -184,6 +183,11 @@
       overflow-y: auto;
     }
 
+    /* Custom Auto-complete Dropdown (Vrai menu déroulant sous l'input) */
+    .dropdown-container {
+      position: relative;
+    }
+
     .form-group {
       margin-bottom: 12px;
     }
@@ -206,6 +210,41 @@
       font-size: 16px;
     }
 
+    .custom-dropdown-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #1a1a24;
+      border: 1px solid var(--accent-red);
+      border-radius: 0 0 6px 6px;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 2000;
+      display: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .custom-dropdown-list.active {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border-color);
+      color: #fff;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover, .dropdown-item:active {
+      background: var(--accent-red);
+    }
+
     .perks-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -217,6 +256,7 @@
       border: 1px dashed var(--perk-border);
       border-radius: 6px;
       padding: 6px 8px;
+      position: relative;
     }
 
     .perk-label {
@@ -346,7 +386,6 @@
       padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;
     }
 
-    /* Custom Item List Modal (Pour afficher les enregistrements) */
     .saved-items-list {
       list-style: none;
       margin-top: 10px;
@@ -414,22 +453,22 @@
       <form id="match-form">
         <input type="hidden" id="match-id">
 
-        <div class="form-group">
+        <div class="form-group dropdown-container">
           <label for="survivor">Survivant joué</label>
-          <input type="text" id="survivor" list="dl-survivors" placeholder="Cliquez ou tapez..." autocomplete="off">
-          <datalist id="dl-survivors"></datalist>
+          <input type="text" id="survivor" placeholder="Sélectionnez ou tapez..." autocomplete="off">
+          <div class="custom-dropdown-list" id="drop-survivor"></div>
         </div>
         
-        <div class="form-group">
+        <div class="form-group dropdown-container">
           <label for="killer">Tueur</label>
-          <input type="text" id="killer" list="dl-killers" required placeholder="Cliquez ou tapez..." autocomplete="off">
-          <datalist id="dl-killers"></datalist>
+          <input type="text" id="killer" required placeholder="Sélectionnez ou tapez..." autocomplete="off">
+          <div class="custom-dropdown-list" id="drop-killer"></div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group dropdown-container">
           <label for="map">Map</label>
-          <input type="text" id="map" list="dl-maps" placeholder="Cliquez ou tapez..." autocomplete="off">
-          <datalist id="dl-maps"></datalist>
+          <input type="text" id="map" placeholder="Sélectionnez ou tapez..." autocomplete="off">
+          <div class="custom-dropdown-list" id="drop-map"></div>
         </div>
 
         <div style="display:flex; gap:8px;">
@@ -446,12 +485,27 @@
         <div class="form-group">
           <label>Tes Perks (4 Emplacements)</label>
           <div class="perks-grid">
-            <div class="perk-box"><span class="perk-label">P1</span><input type="text" id="perk1" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
-            <div class="perk-box"><span class="perk-label">P2</span><input type="text" id="perk2" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
-            <div class="perk-box"><span class="perk-label">P3</span><input type="text" id="perk3" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
-            <div class="perk-box"><span class="perk-label">P4</span><input type="text" id="perk4" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
+            <div class="perk-box dropdown-container">
+              <span class="perk-label">P1</span>
+              <input type="text" id="perk1" class="perk-input" placeholder="Perk..." autocomplete="off">
+              <div class="custom-dropdown-list" id="drop-perk1"></div>
+            </div>
+            <div class="perk-box dropdown-container">
+              <span class="perk-label">P2</span>
+              <input type="text" id="perk2" class="perk-input" placeholder="Perk..." autocomplete="off">
+              <div class="custom-dropdown-list" id="drop-perk2"></div>
+            </div>
+            <div class="perk-box dropdown-container">
+              <span class="perk-label">P3</span>
+              <input type="text" id="perk3" class="perk-input" placeholder="Perk..." autocomplete="off">
+              <div class="custom-dropdown-list" id="drop-perk3"></div>
+            </div>
+            <div class="perk-box dropdown-container">
+              <span class="perk-label">P4</span>
+              <input type="text" id="perk4" class="perk-input" placeholder="Perk..." autocomplete="off">
+              <div class="custom-dropdown-list" id="drop-perk4"></div>
+            </div>
           </div>
-          <datalist id="dl-perks"></datalist>
         </div>
 
         <div class="form-group">
@@ -491,34 +545,88 @@
   </div>
 
   <script>
-    // Storage
+    // Storage Initialisation & Rétrocompatibilité
     let matches = JSON.parse(localStorage.getItem('dbd_matches')) || [];
     let savedPerks = JSON.parse(localStorage.getItem('dbd_saved_perks')) || [];
     let savedSurvivors = JSON.parse(localStorage.getItem('dbd_saved_survivors')) || [];
     let savedKillers = JSON.parse(localStorage.getItem('dbd_saved_killers')) || [];
     let savedMaps = JSON.parse(localStorage.getItem('dbd_saved_maps')) || [];
 
+    // Extraction automatique des 50 anciennes parties enregistrées dans tes options
+    matches.forEach(m => {
+      if (m.survivor && !savedSurvivors.includes(m.survivor)) savedSurvivors.push(m.survivor);
+      if (m.killer && !savedKillers.includes(m.killer)) savedKillers.push(m.killer);
+      if (m.map && m.map !== 'Map non spécifiée' && !savedMaps.includes(m.map)) savedMaps.push(m.map);
+      if (m.perks && Array.isArray(m.perks)) {
+        m.perks.forEach(p => { if (p && !savedPerks.includes(p)) savedPerks.push(p); });
+      }
+    });
+
+    localStorage.setItem('dbd_saved_survivors', JSON.stringify(savedSurvivors));
+    localStorage.setItem('dbd_saved_killers', JSON.stringify(savedKillers));
+    localStorage.setItem('dbd_saved_maps', JSON.stringify(savedMaps));
+    localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
+
     let currentTab = 'all';
     let activeCategoryType = '';
 
-    function updateDatalists() {
-      fillDatalist('dl-survivors', savedSurvivors);
-      fillDatalist('dl-killers', savedKillers);
-      fillDatalist('dl-maps', savedMaps);
-      fillDatalist('dl-perks', savedPerks);
+    // Gestion du VRAI Menu Déroulant (Dropdown Custom sur mesure)
+    function setupCustomDropdown(inputId, dropId, itemsList) {
+      const input = document.getElementById(inputId);
+      const drop = document.getElementById(dropId);
+
+      function showDropdown() {
+        closeAllDropdowns();
+        const filter = input.value.toLowerCase();
+        drop.innerHTML = '';
+
+        const matchingItems = itemsList.filter(item => item.toLowerCase().includes(filter));
+
+        if (matchingItems.length === 0) {
+          drop.classList.remove('active');
+          return;
+        }
+
+        matchingItems.sort().forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'dropdown-item';
+          div.innerText = item;
+          div.onmousedown = function(e) {
+            e.preventDefault();
+            input.value = item;
+            drop.classList.remove('active');
+          };
+          drop.appendChild(div);
+        });
+
+        drop.classList.add('active');
+      }
+
+      input.addEventListener('focus', showDropdown);
+      input.addEventListener('input', showDropdown);
     }
 
-    function fillDatalist(id, list) {
-      const el = document.getElementById(id);
-      el.innerHTML = '';
-      list.sort().forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        el.appendChild(opt);
-      });
+    function closeAllDropdowns() {
+      document.querySelectorAll('.custom-dropdown-list').forEach(d => d.classList.remove('active'));
     }
 
-    /* Modal Catégories (Survivants, Tueurs, Maps, Perks) */
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown-container')) {
+        closeAllDropdowns();
+      }
+    });
+
+    function initAllDropdowns() {
+      setupCustomDropdown('survivor', 'drop-survivor', savedSurvivors);
+      setupCustomDropdown('killer', 'drop-killer', savedKillers);
+      setupCustomDropdown('map', 'drop-map', savedMaps);
+      setupCustomDropdown('perk1', 'drop-perk1', savedPerks);
+      setupCustomDropdown('perk2', 'drop-perk2', savedPerks);
+      setupCustomDropdown('perk3', 'drop-perk3', savedPerks);
+      setupCustomDropdown('perk4', 'drop-perk4', savedPerks);
+    }
+
+    /* Modal Gestion Catégories */
     function openCategoryModal(type) {
       activeCategoryType = type;
       const titleMap = {
@@ -567,7 +675,7 @@
       if (!targetArray.includes(val)) {
         targetArray.push(val);
         saveArrayByType(activeCategoryType);
-        updateDatalists();
+        initAllDropdowns();
         renderCategoryList();
       }
       input.value = '';
@@ -579,7 +687,7 @@
       if (index !== -1) {
         targetArray.splice(index, 1);
         saveArrayByType(activeCategoryType);
-        updateDatalists();
+        initAllDropdowns();
         renderCategoryList();
       }
     }
@@ -594,7 +702,7 @@
     function openModal(editId = null) {
       document.getElementById('match-form').reset();
       document.getElementById('match-id').value = '';
-      updateDatalists();
+      closeAllDropdowns();
 
       if (editId) {
         const m = matches.find(x => x.id === editId);
@@ -614,11 +722,13 @@
           document.getElementById('perk4').value = p[3] || '';
         }
       }
+      initAllDropdowns();
       document.getElementById('modal').classList.add('active');
     }
 
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
+      closeAllDropdowns();
     }
 
     document.getElementById('match-form').addEventListener('submit', (e) => {
@@ -678,7 +788,7 @@
       const listContainer = document.getElementById('match-list');
       listContainer.innerHTML = '';
 
-      // Render Streak
+      // Streak Render
       const streakContainer = document.getElementById('streak-dots');
       streakContainer.innerHTML = '';
       const recentMatches = matches.slice(0, 10).reverse();
@@ -736,8 +846,8 @@
       return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
     }
 
-    // Init
-    updateDatalists();
+    // Init App
+    initAllDropdowns();
     render();
   </script>
 </body>
