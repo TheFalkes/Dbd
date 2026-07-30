@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DBD Match Tracker V2</title>
+  <title>DBD Match Tracker V3</title>
   <style>
     :root {
       --bg-color: #0a0a0c;
@@ -46,6 +46,45 @@
       text-shadow: 0 0 12px rgba(217, 43, 43, 0.6);
     }
 
+    /* Main Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .nav-btn.active {
+      background: var(--accent-red);
+      color: white;
+      border-color: var(--accent-red);
+      box-shadow: 0 0 10px rgba(217, 43, 43, 0.4);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     /* Streak Bar */
     .streak-container {
       background: var(--card-bg);
@@ -75,13 +114,13 @@
     }
 
     .streak-dot {
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: bold;
       color: white;
       flex-shrink: 0;
@@ -90,7 +129,7 @@
     .streak-dot.orange { background: var(--accent-orange); }
     .streak-dot.red { background: var(--accent-red); }
 
-    /* Controls Bar (Export / Import / Search) */
+    /* Controls Bar */
     .toolbar {
       display: flex;
       gap: 10px;
@@ -120,14 +159,8 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      transition: background 0.2s;
     }
 
-    .btn-tool:hover {
-      background: #202028;
-    }
-
-    /* Main Button */
     .btn-main {
       display: block;
       width: 100%;
@@ -143,15 +176,94 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       box-shadow: 0 4px 15px rgba(217, 43, 43, 0.3);
-      transition: transform 0.1s, background 0.2s;
     }
 
-    .btn-main:active {
-      transform: scale(0.99);
+    /* Status Filter Bar */
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 15px;
+      overflow-x: auto;
     }
 
-    .btn-main:hover {
-      background: #b52222;
+    .filter-btn {
+      padding: 8px 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 0.85rem;
+    }
+
+    .filter-btn.active {
+      background: #22222c;
+      color: white;
+      border-color: #555;
+    }
+
+    /* Autocomplete Selector UI */
+    .custom-select-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .selected-item-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0b0b0e;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px;
+      cursor: pointer;
+      min-height: 42px;
+    }
+
+    .selected-item-display img {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      object-fit: contain;
+    }
+
+    .autocomplete-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #141418;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 2000;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    }
+
+    .autocomplete-dropdown.open {
+      display: block;
+    }
+
+    .autocomplete-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #1a1a22;
+    }
+
+    .autocomplete-item:hover {
+      background: #22222c;
+    }
+
+    .autocomplete-item img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
     }
 
     /* Modal Form */
@@ -166,9 +278,7 @@
       padding: 15px;
     }
 
-    .modal.active {
-      display: flex;
-    }
+    .modal.active { display: flex; }
 
     .modal-content {
       background: var(--card-bg);
@@ -181,17 +291,13 @@
       overflow-y: auto;
     }
 
-    .form-group {
-      margin-bottom: 14px;
-    }
-
+    .form-group { margin-bottom: 14px; }
     .form-group label {
       display: block;
       margin-bottom: 5px;
       color: var(--text-muted);
       font-size: 0.85rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .form-group input, .form-group select, .form-group textarea {
@@ -204,17 +310,10 @@
       font-size: 0.95rem;
     }
 
-    .form-group textarea {
-      resize: vertical;
-      height: 60px;
-    }
-
-    /* Perks 4 Diamonds / Squares Grid */
     .perks-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-top: 5px;
     }
 
     .perk-box {
@@ -222,47 +321,11 @@
       border: 1px dashed var(--perk-border);
       border-radius: 8px;
       padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      position: relative;
-      transition: border-color 0.2s;
     }
 
-    .perk-box:focus-within {
-      border-color: var(--perk-accent);
-    }
-
-    .perk-label {
-      font-size: 0.7rem;
-      color: var(--perk-accent);
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .perk-input {
-      background: transparent !important;
-      border: none !important;
-      padding: 4px 0 !important;
-      font-size: 0.85rem !important;
-      color: #fff !important;
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 8px;
-      margin-top: 5px;
-    }
-
-    .radio-option {
-      flex: 1;
-      text-align: center;
-    }
-
-    .radio-option input {
-      display: none;
-    }
-
+    .radio-group { display: flex; gap: 8px; margin-top: 5px; }
+    .radio-option { flex: 1; text-align: center; }
+    .radio-option input { display: none; }
     .radio-option label {
       display: block;
       padding: 10px 5px;
@@ -274,17 +337,11 @@
       color: var(--text-color);
       font-weight: bold;
     }
+    .radio-option input:checked + label.lbl-red { background: var(--accent-red); }
+    .radio-option input:checked + label.lbl-orange { background: var(--accent-orange); }
+    .radio-option input:checked + label.lbl-green { background: var(--accent-green); }
 
-    .radio-option input:checked + label.lbl-red { background: var(--accent-red); color: white; border-color: var(--accent-red); }
-    .radio-option input:checked + label.lbl-orange { background: var(--accent-orange); color: white; border-color: var(--accent-orange); }
-    .radio-option input:checked + label.lbl-green { background: var(--accent-green); color: white; border-color: var(--accent-green); }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
     .btn-secondary {
       background: #2a2a35;
       color: white;
@@ -295,50 +352,8 @@
       flex: 1;
     }
 
-    /* Tabs Bar */
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 15px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .tab-btn {
-      padding: 8px 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      border-radius: 6px;
-      cursor: pointer;
-      white-space: nowrap;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .tab-badge {
-      background: #262630;
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 0.75rem;
-      color: #fff;
-    }
-
-    .tab-btn.active {
-      background: #22222c;
-      color: white;
-      border-color: #555;
-    }
-
-    /* Match Card Lists */
-    .match-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
+    /* Cards */
+    .match-list { display: flex; flex-direction: column; gap: 12px; }
     .match-card {
       background: var(--card-bg);
       border-radius: 8px;
@@ -346,45 +361,15 @@
       border-left: 5px solid var(--border-color);
       position: relative;
     }
-
     .match-card.status-red { border-left-color: var(--accent-red); }
     .match-card.status-orange { border-left-color: var(--accent-orange); }
     .match-card.status-green { border-left-color: var(--accent-green); }
 
-    .card-actions {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      display: flex;
-      gap: 8px;
-    }
+    .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; }
+    .btn-icon { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; }
 
-    .btn-icon {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .btn-icon:hover { color: white; }
-
-    .card-header {
-      margin-bottom: 6px;
-      padding-right: 50px;
-    }
-
-    .card-killer {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .card-map {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
+    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .card-header img { width: 40px; height: 40px; border-radius: 4px; object-fit: contain; }
 
     .card-details {
       display: flex;
@@ -398,21 +383,7 @@
       border-radius: 6px;
     }
 
-    .card-perks-title {
-      font-size: 0.75rem;
-      color: var(--perk-accent);
-      text-transform: uppercase;
-      font-weight: bold;
-      margin-top: 8px;
-      margin-bottom: 4px;
-    }
-
-    .card-perks-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
+    .card-perks-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
     .card-perk-tag {
       background: var(--perk-bg);
       border: 1px solid var(--perk-border);
@@ -420,107 +391,103 @@
       padding: 3px 8px;
       border-radius: 4px;
       font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
-
-    .card-notes {
-      font-size: 0.8rem;
-      background: #0b0b0e;
-      padding: 8px;
-      border-radius: 4px;
-      color: #aaa;
-      margin-top: 8px;
-      border-left: 2px solid #3a3a4a;
-    }
+    .card-perk-tag img { width: 16px; height: 16px; }
 
     /* Stats View */
-    .stats-container {
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .stats-container.active {
-      display: flex;
-    }
-
     .stat-box {
       background: var(--card-bg);
       padding: 14px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
+      margin-bottom: 12px;
     }
+    .stat-title { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+    .stat-value { font-size: 1.4rem; font-weight: bold; color: white; }
 
-    .stat-title {
-      font-size: 0.8rem;
+    /* Randomizer View */
+    .sub-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .sub-tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: #1c1c22;
+      border: 1px solid var(--border-color);
       color: var(--text-muted);
-      margin-bottom: 4px;
-      text-transform: uppercase;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
     }
+    .sub-tab-btn.active { background: #2a2a35; color: white; border-color: #666; }
 
-    .stat-value {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: white;
-    }
-
-    .stat-list {
-      list-style: none;
-      margin-top: 8px;
-    }
-
-    .stat-item {
+    .random-display {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px;
       display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px solid #1a1a22;
-      font-size: 0.9rem;
+      flex-direction: column;
+      gap: 15px;
     }
+    .random-row { display: flex; align-items: center; gap: 12px; }
+    .random-row img { width: 45px; height: 45px; object-fit: contain; background: #0b0b0e; border-radius: 6px; padding: 2px; }
+    .random-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .random-card {
+      background: #0b0b0e;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    .random-card img { width: 35px; height: 35px; object-fit: contain; }
   </style>
 </head>
 <body>
 
   <h1>DBD Match Tracker</h1>
 
-  <!-- Top Streak Bar -->
-  <div class="streak-container">
-    <span class="streak-title">Derniers Matchs:</span>
-    <div class="streak-dots" id="streak-dots">
-      <span style="color:var(--text-muted); font-size:0.8rem;">Aucune partie</span>
+  <!-- Main Navigation Tabs -->
+  <div class="nav-tabs">
+    <button class="nav-btn active" onclick="switchNavTab('game')">Game</button>
+    <button class="nav-btn" onclick="switchNavTab('stats')">Stats</button>
+    <button class="nav-btn" onclick="switchNavTab('random')">Random</button>
+  </div>
+
+  <!-- TAB 1: GAME -->
+  <div id="tab-game" class="tab-content active">
+    <div class="streak-container">
+      <span class="streak-title">Derniers Matchs:</span>
+      <div class="streak-dots" id="streak-dots">
+        <span style="color:var(--text-muted); font-size:0.8rem;">Aucune partie</span>
+      </div>
     </div>
+
+    <div class="toolbar">
+      <input type="text" id="search-bar" class="search-input" placeholder="🔍 Rechercher (Tueur, Map, Perk...)" oninput="render()">
+      <button class="btn-tool" onclick="exportData()">💾 Exporter</button>
+      <button class="btn-tool" onclick="document.getElementById('import-file').click()">📂 Importer</button>
+      <input type="file" id="import-file" style="display:none" accept=".json" onchange="importData(event)">
+    </div>
+
+    <button class="btn-main" onclick="openModal()">+ Ajouter une partie</button>
+
+    <div class="filter-tabs">
+      <button class="filter-btn active" onclick="switchFilterTab('all', event)">Tous (<span id="count-all">0</span>)</button>
+      <button class="filter-btn" onclick="switchFilterTab('green', event)">🟢 Porte (<span id="count-green">0</span>)</button>
+      <button class="filter-btn" onclick="switchFilterTab('orange', event)">🟠 Trappe (<span id="count-orange">0</span>)</button>
+      <button class="filter-btn" onclick="switchFilterTab('red', event)">🔴 Mort (<span id="count-red">0</span>)</button>
+    </div>
+
+    <div id="match-list" class="match-list"></div>
   </div>
 
-  <!-- Action Bar (Search + Export/Import) -->
-  <div class="toolbar">
-    <input type="text" id="search-bar" class="search-input" placeholder="🔍 Rechercher (Tueur, Map, Perk...)" oninput="render()">
-    <button class="btn-tool" onclick="exportData()">💾 Exporter</button>
-    <button class="btn-tool" onclick="document.getElementById('import-file').click()">📂 Importer</button>
-    <input type="file" id="import-file" style="display:none" accept=".json" onchange="importData(event)">
-  </div>
-
-  <button class="btn-main" onclick="openModal()">+ Ajouter une partie</button>
-
-  <!-- Navigation Tabs -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('all', event)">
-      Tous <span class="tab-badge" id="count-all">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('green', event)">
-      🟢 Porte <span class="tab-badge" id="count-green">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('orange', event)">
-      🟠 Trappe <span class="tab-badge" id="count-orange">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('red', event)">
-      🔴 Non sorti <span class="tab-badge" id="count-red">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('stats', event)">📊 Stats</button>
-  </div>
-
-  <!-- Match Cards List -->
-  <div id="match-list" class="match-list"></div>
-
-  <!-- Stats View -->
-  <div id="stats-view" class="stats-container">
+  <!-- TAB 2: STATS -->
+  <div id="tab-stats" class="tab-content">
     <div class="stat-box">
       <div class="stat-title">Taux de Survie Global</div>
       <div class="stat-value" id="stat-survival">0%</div>
@@ -531,25 +498,59 @@
     </div>
     <div class="stat-box">
       <div class="stat-title">Taux d'Apparition des Tueurs</div>
-      <ul class="stat-list" id="stat-killers"></ul>
+      <ul style="list-style:none; margin-top:8px;" id="stat-killers"></ul>
     </div>
   </div>
 
-  <!-- Form Modal -->
+  <!-- TAB 3: RANDOMIZER -->
+  <div id="tab-random" class="tab-content">
+    <div class="sub-tabs">
+      <button class="sub-tab-btn active" id="btn-sub-surv" onclick="switchRandomTab('survivor')">Survivant</button>
+      <button class="sub-tab-btn" id="btn-sub-killer" onclick="switchRandomTab('killer')">Tueur</button>
+    </div>
+
+    <button class="btn-main" style="background:#8e44ad;" onclick="generateRandomBuild()">🎲 PRÊT</button>
+
+    <div class="random-display" id="random-container">
+      <!-- Generated content -->
+    </div>
+  </div>
+
+  <!-- Modal Form -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <h2 id="modal-title" style="margin-bottom: 12px; font-size:1.3rem;">Nouvelle Partie</h2>
       <form id="match-form">
         <input type="hidden" id="match-id">
         
+        <!-- Killer Visual Selector -->
         <div class="form-group">
-          <label for="killer">Tueur</label>
-          <input type="text" id="killer" required placeholder="Ex: Ghostface, Nurse...">
+          <label>Tueur</label>
+          <div class="custom-select-container">
+            <input type="text" id="killer-search" placeholder="Tape pour chercher un tueur..." oninput="filterAutocomplete('killer')" onfocus="openAutocomplete('killer')">
+            <input type="hidden" id="killer-value">
+            <div class="autocomplete-dropdown" id="killer-dropdown"></div>
+          </div>
         </div>
 
+        <!-- Survivor Visual Selector -->
         <div class="form-group">
-          <label for="map">Map (Texte libre)</label>
-          <input type="text" id="map" placeholder="Ex: Ormond, RPD...">
+          <label>Personnage Joué</label>
+          <div class="custom-select-container">
+            <input type="text" id="survivor-search" placeholder="Tape pour chercher un personnage..." oninput="filterAutocomplete('survivor')" onfocus="openAutocomplete('survivor')">
+            <input type="hidden" id="survivor-value">
+            <div class="autocomplete-dropdown" id="survivor-dropdown"></div>
+          </div>
+        </div>
+
+        <!-- Map Visual Selector -->
+        <div class="form-group">
+          <label>Map</label>
+          <div class="custom-select-container">
+            <input type="text" id="map-search" placeholder="Tape pour chercher une carte..." oninput="filterAutocomplete('map')" onfocus="openAutocomplete('map')">
+            <input type="hidden" id="map-value">
+            <div class="autocomplete-dropdown" id="map-dropdown"></div>
+          </div>
         </div>
 
         <div style="display:flex; gap:10px;">
@@ -563,38 +564,40 @@
           </div>
         </div>
 
-        <!-- Hooks Count -->
         <div class="form-group">
           <label for="hooks">Fois accroché</label>
           <select id="hooks">
-            <option value="0">0 fois (Jamais accroché)</option>
+            <option value="0">0 fois (Jamais)</option>
             <option value="1">1 fois</option>
-            <option value="2">2 fois (Près de la mort)</option>
+            <option value="2">2 fois</option>
           </select>
         </div>
 
-        <!-- Perks Section (4 Squares) -->
+        <!-- Perks Section -->
         <div class="form-group">
           <label>Tes Perks (4 Emplacements)</label>
           <div class="perks-grid">
             <div class="perk-box">
-              <span class="perk-label">Perk 1</span>
-              <input type="text" id="perk1" class="perk-input" list="perks-saved-list" placeholder="Nom de la perk...">
+              <input type="text" id="perk1-search" placeholder="Perk 1..." oninput="filterAutocomplete('perk1')" onfocus="openAutocomplete('perk1')">
+              <input type="hidden" id="perk1-value">
+              <div class="autocomplete-dropdown" id="perk1-dropdown"></div>
             </div>
             <div class="perk-box">
-              <span class="perk-label">Perk 2</span>
-              <input type="text" id="perk2" class="perk-input" list="perks-saved-list" placeholder="Nom de la perk...">
+              <input type="text" id="perk2-search" placeholder="Perk 2..." oninput="filterAutocomplete('perk2')" onfocus="openAutocomplete('perk2')">
+              <input type="hidden" id="perk2-value">
+              <div class="autocomplete-dropdown" id="perk2-dropdown"></div>
             </div>
             <div class="perk-box">
-              <span class="perk-label">Perk 3</span>
-              <input type="text" id="perk3" class="perk-input" list="perks-saved-list" placeholder="Nom de la perk...">
+              <input type="text" id="perk3-search" placeholder="Perk 3..." oninput="filterAutocomplete('perk3')" onfocus="openAutocomplete('perk3')">
+              <input type="hidden" id="perk3-value">
+              <div class="autocomplete-dropdown" id="perk3-dropdown"></div>
             </div>
             <div class="perk-box">
-              <span class="perk-label">Perk 4</span>
-              <input type="text" id="perk4" class="perk-input" list="perks-saved-list" placeholder="Nom de la perk...">
+              <input type="text" id="perk4-search" placeholder="Perk 4..." oninput="filterAutocomplete('perk4')" onfocus="openAutocomplete('perk4')">
+              <input type="hidden" id="perk4-value">
+              <div class="autocomplete-dropdown" id="perk4-dropdown"></div>
             </div>
           </div>
-          <datalist id="perks-saved-list"></datalist>
         </div>
 
         <div class="form-group">
@@ -616,8 +619,8 @@
         </div>
 
         <div class="form-group">
-          <label for="notes">Notes / Remarques (Optionnel)</label>
-          <textarea id="notes" placeholder="Ex: Tunnel, clutch trappe..."></textarea>
+          <label for="notes">Notes</label>
+          <textarea id="notes" placeholder="Ex: Tunnel, clutch..."></textarea>
         </div>
 
         <div class="modal-actions">
@@ -629,9 +632,67 @@
   </div>
 
   <script>
+    // GAME DATABASE (v10.0.2 Included)
+    const DEFAULT_ICON = "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/1/14/Help_icon.png";
+
+    const DB = {
+      killers: [
+        { id: "jason", name: "Jason Voorhees", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/a/a5/K35_charSelect_portrait.png" },
+        { id: "trapper", name: "Le Piégeur", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/4/47/K01_charSelect_portrait.png" },
+        { id: "wraith", name: "Le Spectre", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/c/c3/K02_charSelect_portrait.png" },
+        { id: "hillbilly", name: "Le Montagnard", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/0/00/K03_charSelect_portrait.png" },
+        { id: "nurse", name: "La Lecheresse / Nurse", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/3/30/K04_charSelect_portrait.png" },
+        { id: "huntress", name: "La Chasseuse", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/2/23/K08_charSelect_portrait.png" },
+        { id: "ghostface", name: "Ghost Face", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/1/14/K16_charSelect_portrait.png" }
+      ],
+      survivors: [
+        { id: "shane", name: "Shane", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/8/87/S40_charSelect_portrait.png" },
+        { id: "dwight", name: "Dwight Fairfield", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/d/d4/S01_charSelect_portrait.png" },
+        { id: "meg", name: "Meg Thomas", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/3/33/S02_charSelect_portrait.png" },
+        { id: "claudette", name: "Claudette Morel", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/0/05/S03_charSelect_portrait.png" },
+        { id: "jake", name: "Jake Park", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/b/b4/S04_charSelect_portrait.png" }
+      ],
+      maps: [
+        { id: "camp_crystal", name: "Camp Crystal Lake", icon: DEFAULT_ICON },
+        { id: "ormond", name: "Ormond", icon: DEFAULT_ICON },
+        { id: "rpd", name: "Commissariat de Raccoon City (RPD)", icon: DEFAULT_ICON },
+        { id: "autohaven", name: "Casse Autohaven", icon: DEFAULT_ICON }
+      ],
+      survivorPerks: [
+        { id: "decisive_strike", name: "Coup décisif", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/e/ee/DecisiveStrike.png" },
+        { id: "dead_hard", name: "Course échevelée", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/8/82/DeadHard.png" },
+        { id: "self_care", name: "Auto-soin", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/a/ab/Self-Care.png" },
+        { id: "adrenaline", name: "Adrénaline", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/f/f7/Adrenaline.png" }
+      ],
+      killerPerks: [
+        { id: "barbecue", name: "Barbecue & Chili", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/3/34/BarbecueAndChili.png" },
+        { id: "ruin", name: "Sort : Ruine", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/1/1a/HexRuin.png" },
+        { id: "corrupt", name: "Intervention corrompue", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/2/23/CorruptIntervention.png" },
+        { id: "noed", name: "Sort : Personne n'échappe à la mort", icon: "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/c/c2/HexNoOneEscapesDeath.png" }
+      ],
+      items: [
+        { id: "medkit", name: "Trousse de secours", icon: DEFAULT_ICON },
+        { id: "flashlight", name: "Lampe torche", icon: DEFAULT_ICON },
+        { id: "toolbox", name: "Boîte à outils", icon: DEFAULT_ICON }
+      ],
+      addons: [
+        { id: "addon_1", name: "Gaze stérile", icon: DEFAULT_ICON },
+        { id: "addon_2", name: "Piles neuves", icon: DEFAULT_ICON },
+        { id: "addon_3", name: "Filtre puissant", icon: DEFAULT_ICON }
+      ],
+      offerings: [
+        { id: "offering_1", name: "Gâteau d'anniversaire", icon: DEFAULT_ICON },
+        { id: "offering_2", name: "Pousse de sang", icon: DEFAULT_ICON }
+      ]
+    };
+
+    // Application State
+    let matches = JSON.parse(localStorage.getItem('dbd_matches')) || [];
+    let currentFilter = 'all';
+    let currentRandomType = 'survivor';
+
     // Audio Web API
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
     function playSound(type) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       const osc = audioCtx.createOscillator();
@@ -643,82 +704,173 @@
         osc.type = 'sine';
         osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
       } else if (type === 'orange') {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(349.23, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'red') {
+      } else {
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(150, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.4);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.4);
       }
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
     }
 
-    // Local Storage Data
-    let matches = JSON.parse(localStorage.getItem('dbd_matches')) || [];
-    let savedPerks = JSON.parse(localStorage.getItem('dbd_saved_perks')) || [];
-    let currentTab = 'all';
+    // Tab Navigation
+    function switchNavTab(tabName) {
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-    const modal = document.getElementById('modal');
-    const form = document.getElementById('match-form');
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
 
-    function updateSavedPerksDatalist() {
-      const datalist = document.getElementById('perks-saved-list');
-      datalist.innerHTML = '';
-      savedPerks.sort().forEach(perk => {
-        const option = document.createElement('option');
-        option.value = perk;
-        datalist.appendChild(option);
+      if (tabName === 'stats') calculateStats();
+      if (tabName === 'random') generateRandomBuild();
+    }
+
+    function switchFilterTab(filter, event) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      render();
+    }
+
+    function switchRandomTab(type) {
+      currentRandomType = type;
+      document.getElementById('btn-sub-surv').classList.toggle('active', type === 'survivor');
+      document.getElementById('btn-sub-killer').classList.toggle('active', type === 'killer');
+      generateRandomBuild();
+    }
+
+    // Autocomplete UI logic
+    function setupAutocompleteFields() {
+      const fields = [
+        { type: 'killer', data: DB.killers },
+        { type: 'survivor', data: DB.survivors },
+        { type: 'map', data: DB.maps },
+        { type: 'perk1', data: DB.survivorPerks },
+        { type: 'perk2', data: DB.survivorPerks },
+        { type: 'perk3', data: DB.survivorPerks },
+        { type: 'perk4', data: DB.survivorPerks }
+      ];
+
+      fields.forEach(field => {
+        const input = document.getElementById(`${field.type}-search`);
+        const dropdown = document.getElementById(`${field.type}-dropdown`);
+        
+        input.addEventListener('focus', () => renderDropdown(field.type, field.data, input.value));
+        input.addEventListener('input', () => renderDropdown(field.type, field.data, input.value));
       });
     }
 
-    function autoCheckStatus() {
-      const escaped = parseInt(document.getElementById('escaped').value) || 0;
-      if (escaped === 0) {
-        document.getElementById('out-red').checked = true;
+    function renderDropdown(type, list, filterText) {
+      const dropdown = document.getElementById(`${type}-dropdown`);
+      dropdown.innerHTML = '';
+      
+      const filtered = list.filter(item => item.name.toLowerCase().includes(filterText.toLowerCase()));
+      
+      if (filtered.length === 0) {
+        dropdown.classList.remove('open');
+        return;
+      }
+
+      filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item';
+        div.innerHTML = `<img src="${item.icon}" onerror="this.src='${DEFAULT_ICON}'"> <span>${item.name}</span>`;
+        div.onclick = () => {
+          document.getElementById(`${type}-search`).value = item.name;
+          document.getElementById(`${type}-value`).value = item.id;
+          dropdown.classList.remove('open');
+        };
+        dropdown.appendChild(div);
+      });
+
+      dropdown.classList.add('open');
+    }
+
+    // Close autocomplete when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.custom-select-container')) {
+        document.querySelectorAll('.autocomplete-dropdown').forEach(el => el.classList.remove('open'));
+      }
+    });
+
+    // Randomizer Algorithm
+    function getRandom(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function getRandomUnique(array, count) {
+      const shuffled = [...array].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+    }
+
+    function generateRandomBuild() {
+      const container = document.getElementById('random-container');
+      container.innerHTML = '';
+
+      if (currentRandomType === 'survivor') {
+        const char = getRandom(DB.survivors);
+        const perks = getRandomUnique(DB.survivorPerks, 4);
+        const item = getRandom(DB.items);
+        const addons = getRandomUnique(DB.addons, 2);
+        const offering = getRandom(DB.offerings);
+
+        container.innerHTML = `
+          <div class="random-row">
+            <img src="${char.icon}" onerror="this.src='${DEFAULT_ICON}'">
+            <div><strong>Personnage:</strong> ${char.name}</div>
+          </div>
+          <div><strong>Perks:</strong></div>
+          <div class="random-grid">
+            ${perks.map(p => `<div class="random-card"><img src="${p.icon}" onerror="this.src='${DEFAULT_ICON}'"> ${p.name}</div>`).join('')}
+          </div>
+          <div><strong>Équipement:</strong></div>
+          <div class="random-grid">
+            <div class="random-card"><img src="${item.icon}" onerror="this.src='${DEFAULT_ICON}'"> ${item.name}</div>
+            <div class="random-card"><img src="${offering.icon}" onerror="this.src='${DEFAULT_ICON}'"> ${offering.name}</div>
+          </div>
+          <div><strong>Add-ons:</strong></div>
+          <div class="random-grid">
+            ${addons.map(a => `<div class="random-card"><img src="${a.icon}" onerror="this.src='${DEFAULT_ICON}'"> ${a.name}</div>`).join('')}
+          </div>
+        `;
+      } else {
+        const killer = getRandom(DB.killers);
+        const perks = getRandomUnique(DB.killerPerks, 4);
+        const addons = getRandomUnique(DB.addons, 2);
+        const offering = getRandom(DB.offerings);
+
+        container.innerHTML = `
+          <div class="random-row">
+            <img src="${killer.icon}" onerror="this.src='${DEFAULT_ICON}'">
+            <div><strong>Tueur:</strong> ${killer.name}</div>
+          </div>
+          <div><strong>Perks:</strong></div>
+          <div class="random-grid">
+            ${perks.map(p => `<div class="random-card"><img src="${p.icon}" onerror="this.src='${DEFAULT_ICON}'"> ${p.name}</div>`).join('')}
+          </div>
+          <div><strong>Add-ons & Offrande:</strong></div>
+          <div class="random-grid">
+            <div class="random-card"><img src="${addons[0].icon}" onerror="this.src='${DEFAULT_ICON}'"> ${addons[0].name}</div>
+            <div class="random-card"><img src="${addons[1].icon}" onerror="this.src='${DEFAULT_ICON}'"> ${addons[1].name}</div>
+            <div class="random-card" style="grid-column: span 2;"><img src="${offering.icon}" onerror="this.src='${DEFAULT_ICON}'"> ${offering.name}</div>
+          </div>
+        `;
       }
     }
 
-    function openModal(editId = null) {
+    // Modal & CRUD Operations
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('match-form');
+
+    function openModal() {
       form.reset();
       document.getElementById('match-id').value = '';
-      document.getElementById('modal-title').innerText = "Nouvelle Partie";
-      updateSavedPerksDatalist();
-
-      if (editId) {
-        const match = matches.find(m => m.id === editId);
-        if (match) {
-          document.getElementById('match-id').value = match.id;
-          document.getElementById('killer').value = match.killer;
-          document.getElementById('map').value = match.map;
-          document.getElementById('gens').value = match.gens;
-          document.getElementById('escaped').value = match.escaped;
-          document.getElementById('hooks').value = match.hooks !== undefined ? match.hooks : 0;
-          document.getElementById('notes').value = match.notes;
-          document.querySelector(`input[name="status"][value="${match.status}"]`).checked = true;
-          
-          const perks = match.perks || [];
-          document.getElementById('perk1').value = perks[0] || '';
-          document.getElementById('perk2').value = perks[1] || '';
-          document.getElementById('perk3').value = perks[2] || '';
-          document.getElementById('perk4').value = perks[3] || '';
-
-          document.getElementById('modal-title').innerText = "Modifier la Partie";
-        }
-      }
-
       modal.classList.add('active');
     }
 
@@ -729,53 +881,30 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       
-      const id = document.getElementById('match-id').value;
-      const rawKiller = document.getElementById('killer').value.trim();
-      const killer = rawKiller.charAt(0).toUpperCase() + rawKiller.slice(1);
-      const map = document.getElementById('map').value.trim() || 'Map non spécifiée';
-      const gens = document.getElementById('gens').value;
+      const killerName = document.getElementById('killer-search').value.trim() || 'Inconnu';
+      const mapName = document.getElementById('map-search').value.trim() || 'Map non spécifiée';
       const status = document.querySelector('input[name="status"]:checked').value;
-      const escaped = document.getElementById('escaped').value;
-      const hooks = document.getElementById('hooks').value;
-      const notes = document.getElementById('notes').value.trim();
 
-      // Collect Perks
-      const p1 = document.getElementById('perk1').value.trim();
-      const p2 = document.getElementById('perk2').value.trim();
-      const p3 = document.getElementById('perk3').value.trim();
-      const p4 = document.getElementById('perk4').value.trim();
-      const perks = [p1, p2, p3, p4].filter(p => p !== '');
+      const newMatch = {
+        id: Date.now().toString(),
+        killer: killerName,
+        map: mapName,
+        gens: document.getElementById('gens').value,
+        status: status,
+        escaped: document.getElementById('escaped').value,
+        hooks: document.getElementById('hooks').value,
+        perks: [
+          document.getElementById('perk1-search').value,
+          document.getElementById('perk2-search').value,
+          document.getElementById('perk3-search').value,
+          document.getElementById('perk4-search').value
+        ].filter(p => p.trim() !== ''),
+        notes: document.getElementById('notes').value.trim(),
+        date: new Date().toLocaleDateString('fr-FR')
+      };
 
-      // Save new perks into history
-      perks.forEach(p => {
-        if (!savedPerks.includes(p)) {
-          savedPerks.push(p);
-        }
-      });
-      localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
-
-      if (id) {
-        const index = matches.findIndex(m => m.id === id);
-        if (index !== -1) {
-          matches[index] = { id, killer, map, gens, status, escaped, hooks, perks, notes, date: matches[index].date };
-        }
-      } else {
-        const newMatch = {
-          id: Date.now().toString(),
-          killer,
-          map,
-          gens,
-          status,
-          escaped,
-          hooks,
-          perks,
-          notes,
-          date: new Date().toLocaleDateString('fr-FR')
-        };
-        matches.unshift(newMatch);
-        playSound(status);
-      }
-
+      matches.unshift(newMatch);
+      playSound(status);
       saveData();
       closeModal();
       render();
@@ -793,55 +922,66 @@
       localStorage.setItem('dbd_matches', JSON.stringify(matches));
     }
 
-    function switchTab(tab, event) {
-      currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
+    function autoCheckStatus() {
+      if (parseInt(document.getElementById('escaped').value) === 0) {
+        document.getElementById('out-red').checked = true;
       }
-      render();
     }
 
-    function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ matches, savedPerks }));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `dbd_tracker_backup_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
+    function render() {
+      renderStreak();
+      updateTabCounts();
 
-    function importData(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+      const listContainer = document.getElementById('match-list');
+      const searchVal = document.getElementById('search-bar').value.toLowerCase().trim();
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (parsed.matches && Array.isArray(parsed.matches)) {
-            matches = parsed.matches;
-            if (parsed.savedPerks) savedPerks = parsed.savedPerks;
-            saveData();
-            localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
-            render();
-            alert('Importation réussie !');
-          } else {
-            alert('Fichier invalide.');
-          }
-        } catch (err) {
-          alert('Erreur lors de la lecture du fichier.');
+      listContainer.innerHTML = '';
+
+      const filtered = matches.filter(m => {
+        if (currentFilter !== 'all' && m.status !== currentFilter) return false;
+        if (searchVal) {
+          return m.killer.toLowerCase().includes(searchVal) ||
+                 m.map.toLowerCase().includes(searchVal) ||
+                 m.perks.some(p => p.toLowerCase().includes(searchVal));
         }
-      };
-      reader.readAsText(file);
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Aucune partie enregistrée.</p>`;
+        return;
+      }
+
+      filtered.forEach(m => {
+        const card = document.createElement('div');
+        card.className = `match-card status-${m.status}`;
+        card.innerHTML = `
+          <div class="card-actions">
+            <button class="btn-icon" onclick="deleteMatch('${m.id}')">🗑️</button>
+          </div>
+          <div class="card-header">
+            <div>
+              <strong style="font-size:1.1rem; color:#fff;">🔪 ${m.killer}</strong>
+              <div style="font-size:0.85rem; color:var(--text-muted);">📍 ${m.map} — <small>${m.date}</small></div>
+            </div>
+          </div>
+          <div class="card-details">
+            <span>⚙️ Gens: <b>${m.gens}/5</b></span>
+            <span>🏃 Sortis: <b>${m.escaped}/4</b></span>
+            <span>🪝 Accroché: <b>${m.hooks} fois</b></span>
+          </div>
+          ${m.perks.length ? `<div class="card-perks-list">${m.perks.map(p => `<span class="card-perk-tag">💎 ${p}</span>`).join('')}</div>` : ''}
+          ${m.notes ? `<div style="font-size:0.8rem; background:#0b0b0e; padding:6px; margin-top:6px; border-radius:4px; color:#aaa;">${m.notes}</div>` : ''}
+        `;
+        listContainer.appendChild(card);
+      });
     }
 
     function renderStreak() {
       const streakContainer = document.getElementById('streak-dots');
       streakContainer.innerHTML = '';
-      
       const lastMatches = matches.slice(0, 10);
+
       if (lastMatches.length === 0) {
         streakContainer.innerHTML = `<span style="color:var(--text-muted); font-size:0.8rem;">Aucune partie</span>`;
         return;
@@ -851,7 +991,6 @@
         const dot = document.createElement('div');
         dot.className = `streak-dot ${m.status}`;
         dot.innerText = m.status === 'green' ? '✓' : (m.status === 'orange' ? '★' : '✕');
-        dot.title = `${m.killer} - ${m.map}`;
         streakContainer.appendChild(dot);
       });
     }
@@ -863,137 +1002,45 @@
       document.getElementById('count-red').innerText = matches.filter(m => m.status === 'red').length;
     }
 
-    function render() {
-      renderStreak();
-      updateTabCounts();
-
-      const listContainer = document.getElementById('match-list');
-      const statsView = document.getElementById('stats-view');
-      const searchVal = document.getElementById('search-bar').value.toLowerCase().trim();
-
-      if (currentTab === 'stats') {
-        listContainer.style.display = 'none';
-        statsView.classList.add('active');
-        calculateStats();
-        return;
-      }
-
-      listContainer.style.display = 'flex';
-      statsView.classList.remove('active');
-      listContainer.innerHTML = '';
-
-      const filtered = matches.filter(m => {
-        if (currentTab !== 'all' && m.status !== currentTab) return false;
-        
-        if (searchVal) {
-          const matchKiller = m.killer.toLowerCase().includes(searchVal);
-          const matchMap = m.map.toLowerCase().includes(searchVal);
-          const matchNotes = (m.notes || '').toLowerCase().includes(searchVal);
-          const matchPerks = (m.perks || []).some(p => p.toLowerCase().includes(searchVal));
-          return matchKiller || matchMap || matchNotes || matchPerks;
-        }
-
-        return true;
-      });
-
-      if (filtered.length === 0) {
-        listContainer.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Aucune partie ne correspond.</p>`;
-        return;
-      }
-
-      filtered.forEach(m => {
-        const card = document.createElement('div');
-        card.className = `match-card status-${m.status}`;
-        
-        const perksHtml = (m.perks && m.perks.length > 0) ? `
-          <div class="card-perks-title">Perks équipées</div>
-          <div class="card-perks-list">
-            ${m.perks.map(p => `<span class="card-perk-tag">💎 ${escapeHtml(p)}</span>`).join('')}
-          </div>
-        ` : '';
-
-        const hooksText = m.hooks == 0 ? "0 fois 🛡️" : `${m.hooks} fois 🪝`;
-
-        card.innerHTML = `
-          <div class="card-actions">
-            <button class="btn-icon" onclick="openModal('${m.id}')">✏️</button>
-            <button class="btn-icon" onclick="deleteMatch('${m.id}')">🗑️</button>
-          </div>
-          <div class="card-header">
-            <div class="card-killer">🔪 ${escapeHtml(m.killer)}</div>
-            <div class="card-map">📍 ${escapeHtml(m.map)} — <small>${m.date}</small></div>
-          </div>
-          <div class="card-details">
-            <span>⚙️ Gens: <b>${m.gens}/5</b></span>
-            <span>🏃 Sortis: <b>${m.escaped}/4</b></span>
-            <span>🪝 Accroché: <b>${hooksText}</b></span>
-          </div>
-          ${perksHtml}
-          ${m.notes ? `<div class="card-notes">${escapeHtml(m.notes)}</div>` : ''}
-        `;
-        listContainer.appendChild(card);
-      });
-    }
-
     function calculateStats() {
       const total = matches.length;
-      if (total === 0) {
-        document.getElementById('stat-survival').innerText = '0%';
-        document.getElementById('stat-deadliest').innerText = '-';
-        document.getElementById('stat-killers').innerHTML = '<li>Aucune donnée enregistrée</li>';
-        return;
-      }
+      if (total === 0) return;
 
       const escapes = matches.filter(m => m.status === 'green' || m.status === 'orange').length;
-      const survivalRate = Math.round((escapes / total) * 100);
-      document.getElementById('stat-survival').innerText = `${survivalRate}% (${escapes}/${total})`;
+      document.getElementById('stat-survival').innerText = `${Math.round((escapes / total) * 100)}% (${escapes}/${total})`;
 
-      const killerApperances = {};
-      const killerDeaths = {};
+      const killerCounts = {};
+      matches.forEach(m => killerCounts[m.killer] = (killerCounts[m.killer] || 0) + 1);
 
-      matches.forEach(m => {
-        const k = m.killer;
-        killerApperances[k] = (killerApperances[k] || 0) + 1;
-        if (m.status === 'red') {
-          killerDeaths[k] = (killerDeaths[k] || 0) + 1;
-        }
-      });
-
-      let deadliestKiller = '-';
-      let maxDeathRate = -1;
-
-      Object.keys(killerApperances).forEach(k => {
-        const deaths = killerDeaths[k] || 0;
-        const rate = deaths / killerApperances[k];
-        if (rate > maxDeathRate) {
-          maxDeathRate = rate;
-          deadliestKiller = k;
-        }
-      });
-
-      const deadliestPercent = Math.round((maxDeathRate) * 100);
-      document.getElementById('stat-deadliest').innerText = `${deadliestKiller} (${deadliestPercent}% de mort)`;
+      const sorted = Object.keys(killerCounts).sort((a,b) => killerCounts[b] - killerCounts[a]);
+      document.getElementById('stat-deadliest').innerText = sorted[0] || '-';
 
       const killerList = document.getElementById('stat-killers');
-      killerList.innerHTML = '';
-
-      const sortedKillers = Object.keys(killerApperances).sort((a,b) => killerApperances[b] - killerApperances[a]);
-
-      sortedKillers.forEach(k => {
-        const count = killerApperances[k];
-        const percent = Math.round((count / total) * 100);
-        
-        const li = document.createElement('li');
-        li.className = 'stat-item';
-        li.innerHTML = `<span>🔪 ${escapeHtml(k)}</span> <b>${percent}% (${count} game${count > 1 ? 's' : ''})</b>`;
-        killerList.appendChild(li);
-      });
+      killerList.innerHTML = sorted.map(k => `<li style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #1a1a22;"><span>🔪 ${k}</span><b>${Math.round((killerCounts[k]/total)*100)}%</b></li>`).join('');
     }
 
-    function escapeHtml(text) {
-      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(matches));
+      const anchor = document.createElement('a');
+      anchor.setAttribute("href", dataStr);
+      anchor.setAttribute("download", `dbd_tracker_backup.json`);
+      anchor.click();
     }
 
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        matches = JSON.parse(e.target.result);
+        saveData();
+        render();
+      };
+      reader.readAsText(file);
+    }
+
+    // Initialize
+    setupAutocompleteFields();
     render();
   </script>
 </body>
