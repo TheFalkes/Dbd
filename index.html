@@ -49,7 +49,7 @@
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: #fff;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       text-shadow: 0 0 10px rgba(217, 43, 43, 0.6);
     }
 
@@ -97,34 +97,46 @@
     .streak-dot.orange { background: var(--accent-orange); }
     .streak-dot.red { background: var(--accent-red); }
 
-    /* Controls Bar */
-    .toolbar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
+    /* Controls & Category Nav (Comme la photo) */
+    .search-box {
+      margin-bottom: 8px;
     }
 
     .search-input {
-      flex: 1;
+      width: 100%;
       padding: 10px 12px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 6px;
       color: white;
-      font-size: 16px; /* Empêche le zoom auto sur mobile */
+      font-size: 16px;
     }
 
-    .btn-tool {
-      padding: 10px 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
+    /* Barre de catégories sous le champ de recherche (Inspiré de la photo) */
+    .category-nav {
       display: flex;
-      align-items: center;
-      gap: 4px;
+      gap: 6px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+    }
+
+    .cat-btn {
+      flex: 1;
+      padding: 8px;
+      background: #1a1a22;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .cat-btn:active {
+      background: var(--accent-red);
     }
 
     /* Main Button */
@@ -145,11 +157,7 @@
       box-shadow: 0 4px 12px rgba(217, 43, 43, 0.3);
     }
 
-    .btn-main:active {
-      transform: scale(0.98);
-    }
-
-    /* Modal Form */
+    /* Modals */
     .modal {
       display: none;
       position: fixed;
@@ -186,10 +194,8 @@
       color: var(--text-muted);
       font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
-    /* La taille 16px sur mobile évite le zoom sur le focus */
     .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       padding: 10px;
@@ -200,17 +206,10 @@
       font-size: 16px;
     }
 
-    .form-group textarea {
-      resize: vertical;
-      height: 50px;
-    }
-
-    /* Perks 4 Squares Grid */
     .perks-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      margin-top: 4px;
     }
 
     .perk-box {
@@ -218,13 +217,6 @@
       border: 1px dashed var(--perk-border);
       border-radius: 6px;
       padding: 6px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .perk-box:focus-within {
-      border-color: var(--perk-accent);
     }
 
     .perk-label {
@@ -245,7 +237,6 @@
     .radio-group {
       display: flex;
       gap: 6px;
-      margin-top: 4px;
     }
 
     .radio-option {
@@ -253,9 +244,7 @@
       text-align: center;
     }
 
-    .radio-option input {
-      display: none;
-    }
+    .radio-option input { display: none; }
 
     .radio-option label {
       display: block;
@@ -269,9 +258,9 @@
       font-weight: bold;
     }
 
-    .radio-option input:checked + label.lbl-red { background: var(--accent-red); color: white; border-color: var(--accent-red); }
-    .radio-option input:checked + label.lbl-orange { background: var(--accent-orange); color: white; border-color: var(--accent-orange); }
-    .radio-option input:checked + label.lbl-green { background: var(--accent-green); color: white; border-color: var(--accent-green); }
+    .radio-option input:checked + label.lbl-red { background: var(--accent-red); color: white; }
+    .radio-option input:checked + label.lbl-orange { background: var(--accent-orange); color: white; }
+    .radio-option input:checked + label.lbl-green { background: var(--accent-green); color: white; }
 
     .modal-actions {
       display: flex;
@@ -289,13 +278,12 @@
       flex: 1;
     }
 
-    /* Tabs Bar */
+    /* Tabs */
     .tabs {
       display: flex;
       gap: 6px;
       margin-bottom: 12px;
       overflow-x: auto;
-      padding-bottom: 2px;
     }
 
     .tab-btn {
@@ -307,17 +295,6 @@
       cursor: pointer;
       white-space: nowrap;
       font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .tab-badge {
-      background: #262630;
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 0.7rem;
-      color: #fff;
     }
 
     .tab-btn.active {
@@ -326,7 +303,7 @@
       border-color: #555;
     }
 
-    /* Match Card Lists */
+    /* List & Cards */
     .match-list {
       display: flex;
       flex-direction: column;
@@ -347,125 +324,54 @@
 
     .card-actions {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 6px;
+      top: 10px; right: 10px;
+      display: flex; gap: 6px;
     }
 
     .btn-icon {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.85rem;
+      background: none; border: none; color: var(--text-muted); cursor: pointer;
     }
 
-    .card-header {
-      margin-bottom: 4px;
-      padding-right: 45px;
-    }
-
-    .card-killer {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .card-map {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
+    .card-killer { font-size: 1rem; font-weight: bold; color: #fff; }
+    .card-map { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
 
     .card-details {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      font-size: 0.8rem;
-      margin: 6px 0;
-      color: #ccc;
-      background: #0b0b0e;
-      padding: 6px 8px;
-      border-radius: 6px;
+      display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; margin: 6px 0; color: #ccc;
+      background: #0b0b0e; padding: 6px 8px; border-radius: 6px;
     }
 
-    .card-perks-title {
-      font-size: 0.7rem;
-      color: var(--perk-accent);
-      text-transform: uppercase;
-      font-weight: bold;
-      margin-top: 6px;
-      margin-bottom: 4px;
-    }
-
-    .card-perks-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
+    .card-perks-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
     .card-perk-tag {
-      background: var(--perk-bg);
-      border: 1px solid var(--perk-border);
-      color: #d1c4e9;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.75rem;
+      background: var(--perk-bg); border: 1px solid var(--perk-border); color: #d1c4e9;
+      padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;
     }
 
-    .card-notes {
-      font-size: 0.75rem;
-      background: #0b0b0e;
-      padding: 6px;
-      border-radius: 4px;
-      color: #aaa;
-      margin-top: 6px;
-      border-left: 2px solid #3a3a4a;
-    }
-
-    /* Stats View */
-    .stats-container {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .stats-container.active {
-      display: flex;
-    }
-
-    .stat-box {
-      background: var(--card-bg);
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-    }
-
-    .stat-title {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-      text-transform: uppercase;
-    }
-
-    .stat-value {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: white;
-    }
-
-    .stat-list {
+    /* Custom Item List Modal (Pour afficher les enregistrements) */
+    .saved-items-list {
       list-style: none;
-      margin-top: 6px;
+      margin-top: 10px;
+      max-height: 250px;
+      overflow-y: auto;
     }
 
-    .stat-item {
+    .saved-item {
       display: flex;
       justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px solid #1a1a22;
-      font-size: 0.85rem;
+      align-items: center;
+      padding: 8px;
+      background: #0b0b0e;
+      border: 1px solid var(--border-color);
+      margin-bottom: 4px;
+      border-radius: 4px;
+    }
+
+    .saved-item button {
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      padding: 2px 6px;
+      border-radius: 4px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -480,70 +386,50 @@
     </div>
   </div>
 
-  <div class="toolbar">
+  <div class="search-box">
     <input type="text" id="search-bar" class="search-input" placeholder="🔍 Rechercher..." oninput="render()">
-    <button class="btn-tool" onclick="exportData()">💾 Exporter</button>
-    <button class="btn-tool" onclick="document.getElementById('import-file').click()">📂 Importer</button>
-    <input type="file" id="import-file" style="display:none" accept=".json" onchange="importData(event)">
+  </div>
+  
+  <div class="category-nav">
+    <button class="cat-btn" onclick="openCategoryModal('survivors')">👤 Survivants</button>
+    <button class="cat-btn" onclick="openCategoryModal('killers')">🔪 Tueurs</button>
+    <button class="cat-btn" onclick="openCategoryModal('maps')">🗺️ Maps</button>
+    <button class="cat-btn" onclick="openCategoryModal('perks')">⚡ Perks</button>
   </div>
 
   <button class="btn-main" onclick="openModal()">+ Ajouter une partie</button>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('all', event)">
-      Tous <span class="tab-badge" id="count-all">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('green', event)">
-      🟢 Porte <span class="tab-badge" id="count-green">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('orange', event)">
-      🟠 Trappe <span class="tab-badge" id="count-orange">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('red', event)">
-      🔴 Non sorti <span class="tab-badge" id="count-red">0</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('stats', event)">📊 Stats</button>
+    <button class="tab-btn active" onclick="switchTab('all', event)">Tous</button>
+    <button class="tab-btn" onclick="switchTab('green', event)">🟢 Porte</button>
+    <button class="tab-btn" onclick="switchTab('orange', event)">🟠 Trappe</button>
+    <button class="tab-btn" onclick="switchTab('red', event)">🔴 Non sorti</button>
   </div>
 
   <div id="match-list" class="match-list"></div>
 
-  <div id="stats-view" class="stats-container">
-    <div class="stat-box">
-      <div class="stat-title">Taux de Survie Global</div>
-      <div class="stat-value" id="stat-survival">0%</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-title">Tueur le Plus Mortel</div>
-      <div class="stat-value" id="stat-deadliest">-</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-title">Taux d'Apparition des Tueurs</div>
-      <ul class="stat-list" id="stat-killers"></ul>
-    </div>
-  </div>
-
   <div class="modal" id="modal">
     <div class="modal-content">
-      <h2 id="modal-title" style="margin-bottom: 10px; font-size:1.2rem;">Nouvelle Partie</h2>
+      <h2 id="modal-title" style="margin-bottom: 10px;">Nouvelle Partie</h2>
       <form id="match-form">
         <input type="hidden" id="match-id">
 
         <div class="form-group">
           <label for="survivor">Survivant joué</label>
-          <input type="text" id="survivor" list="survivors-saved-list" placeholder="Ex: Lara Croft, Sable Ward..." autocomplete="off">
-          <datalist id="survivors-saved-list"></datalist>
+          <input type="text" id="survivor" list="dl-survivors" placeholder="Cliquez ou tapez..." autocomplete="off">
+          <datalist id="dl-survivors"></datalist>
         </div>
         
         <div class="form-group">
           <label for="killer">Tueur</label>
-          <input type="text" id="killer" list="killers-saved-list" required placeholder="Ex: Ghostface, Nurse..." autocomplete="off">
-          <datalist id="killers-saved-list"></datalist>
+          <input type="text" id="killer" list="dl-killers" required placeholder="Cliquez ou tapez..." autocomplete="off">
+          <datalist id="dl-killers"></datalist>
         </div>
 
         <div class="form-group">
           <label for="map">Map</label>
-          <input type="text" id="map" list="maps-saved-list" placeholder="Ex: Ormond, RPD..." autocomplete="off">
-          <datalist id="maps-saved-list"></datalist>
+          <input type="text" id="map" list="dl-maps" placeholder="Cliquez ou tapez..." autocomplete="off">
+          <datalist id="dl-maps"></datalist>
         </div>
 
         <div style="display:flex; gap:8px;">
@@ -552,111 +438,60 @@
             <input type="number" id="gens" min="0" max="5" value="5">
           </div>
           <div class="form-group" style="flex:1;">
-            <label for="escaped">Évadés (0 à 4)</label>
-            <input type="number" id="escaped" min="0" max="4" value="1" oninput="autoCheckStatus()">
+            <label for="escaped">Évadés (0-4)</label>
+            <input type="number" id="escaped" min="0" max="4" value="1">
           </div>
-        </div>
-
-        <div class="form-group">
-          <label for="hooks">Fois accroché</label>
-          <select id="hooks">
-            <option value="0">0 fois (Jamais)</option>
-            <option value="1">1 fois</option>
-            <option value="2">2 fois (Mort proche)</option>
-          </select>
         </div>
 
         <div class="form-group">
           <label>Tes Perks (4 Emplacements)</label>
           <div class="perks-grid">
-            <div class="perk-box">
-              <span class="perk-label">Perk 1</span>
-              <input type="text" id="perk1" class="perk-input" list="perks-saved-list" placeholder="Nom perk..." autocomplete="off">
-            </div>
-            <div class="perk-box">
-              <span class="perk-label">Perk 2</span>
-              <input type="text" id="perk2" class="perk-input" list="perks-saved-list" placeholder="Nom perk..." autocomplete="off">
-            </div>
-            <div class="perk-box">
-              <span class="perk-label">Perk 3</span>
-              <input type="text" id="perk3" class="perk-input" list="perks-saved-list" placeholder="Nom perk..." autocomplete="off">
-            </div>
-            <div class="perk-box">
-              <span class="perk-label">Perk 4</span>
-              <input type="text" id="perk4" class="perk-input" list="perks-saved-list" placeholder="Nom perk..." autocomplete="off">
-            </div>
+            <div class="perk-box"><span class="perk-label">P1</span><input type="text" id="perk1" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
+            <div class="perk-box"><span class="perk-label">P2</span><input type="text" id="perk2" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
+            <div class="perk-box"><span class="perk-label">P3</span><input type="text" id="perk3" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
+            <div class="perk-box"><span class="perk-label">P4</span><input type="text" id="perk4" class="perk-input" list="dl-perks" placeholder="Perk..." autocomplete="off"></div>
           </div>
-          <datalist id="perks-saved-list"></datalist>
+          <datalist id="dl-perks"></datalist>
         </div>
 
         <div class="form-group">
-          <label>Résultat de ta partie</label>
+          <label>Résultat</label>
           <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="out-red" name="status" value="red" checked>
-              <label for="out-red" class="lbl-red">Mort 🔴</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" id="out-orange" name="status" value="orange">
-              <label for="out-orange" class="lbl-orange">Trappe 🟠</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" id="out-green" name="status" value="green">
-              <label for="out-green" class="lbl-green">Porte 🟢</label>
-            </div>
+            <div class="radio-option"><input type="radio" id="out-red" name="status" value="red" checked><label for="out-red" class="lbl-red">Mort 🔴</label></div>
+            <div class="radio-option"><input type="radio" id="out-orange" name="status" value="orange"><label for="out-orange" class="lbl-orange">Trappe 🟠</label></div>
+            <div class="radio-option"><input type="radio" id="out-green" name="status" value="green"><label for="out-green" class="lbl-green">Porte 🟢</label></div>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="notes">Notes / Remarques (Optionnel)</label>
-          <textarea id="notes" placeholder="Ex: Tunnel, clutch trappe..."></textarea>
+          <label for="notes">Notes</label>
+          <textarea id="notes" placeholder="Remarques..."></textarea>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn-main" style="margin:0; flex:1;">Terminé</button>
+          <button type="button" class="btn-secondary" onclick="closeModal('modal')">Annuler</button>
+          <button type="submit" class="btn-main" style="margin:0; flex:1;">Enregistrer</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script>
-    // Audio Web API
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      if (type === 'green') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'orange') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(349.23, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'red') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.4);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.4);
-      }
-    }
+  <div class="modal" id="cat-modal">
+    <div class="modal-content">
+      <h3 id="cat-title" style="margin-bottom:8px;">Gestion des éléments</h3>
+      <div style="display:flex; gap:6px; margin-bottom: 10px;">
+        <input type="text" id="new-cat-item" placeholder="Ajouter manuellement..." style="flex:1; padding:8px; background:#0b0b0e; border:1px solid var(--border-color); color:#fff; border-radius:4px; font-size:16px;">
+        <button onclick="addManualCatItem()" style="background:var(--accent-green); color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold;">+</button>
+      </div>
+      <ul class="saved-items-list" id="cat-items-list"></ul>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('cat-modal')">Fermer</button>
+      </div>
+    </div>
+  </div>
 
-    // Local Storage Data
+  <script>
+    // Storage
     let matches = JSON.parse(localStorage.getItem('dbd_matches')) || [];
     let savedPerks = JSON.parse(localStorage.getItem('dbd_saved_perks')) || [];
     let savedSurvivors = JSON.parse(localStorage.getItem('dbd_saved_survivors')) || [];
@@ -664,82 +499,137 @@
     let savedMaps = JSON.parse(localStorage.getItem('dbd_saved_maps')) || [];
 
     let currentTab = 'all';
-    const modal = document.getElementById('modal');
-    const form = document.getElementById('match-form');
+    let activeCategoryType = '';
 
-    // Mise à jour de tous les menus déroulants d'auto-complétion
-    function updateAllDatalists() {
-      fillDatalist('perks-saved-list', savedPerks);
-      fillDatalist('survivors-saved-list', savedSurvivors);
-      fillDatalist('killers-saved-list', savedKillers);
-      fillDatalist('maps-saved-list', savedMaps);
+    function updateDatalists() {
+      fillDatalist('dl-survivors', savedSurvivors);
+      fillDatalist('dl-killers', savedKillers);
+      fillDatalist('dl-maps', savedMaps);
+      fillDatalist('dl-perks', savedPerks);
     }
 
-    function fillDatalist(elementId, itemsList) {
-      const datalist = document.getElementById(elementId);
-      datalist.innerHTML = '';
-      itemsList.sort().forEach(item => {
-        const option = document.createElement('option');
-        option.value = item;
-        datalist.appendChild(option);
+    function fillDatalist(id, list) {
+      const el = document.getElementById(id);
+      el.innerHTML = '';
+      list.sort().forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        el.appendChild(opt);
       });
     }
 
-    function autoCheckStatus() {
-      const escaped = parseInt(document.getElementById('escaped').value) || 0;
-      if (escaped === 0) {
-        document.getElementById('out-red').checked = true;
+    /* Modal Catégories (Survivants, Tueurs, Maps, Perks) */
+    function openCategoryModal(type) {
+      activeCategoryType = type;
+      const titleMap = {
+        'survivors': '👤 Liste des Survivants',
+        'killers': '🔪 Liste des Tueurs',
+        'maps': '🗺️ Liste des Maps',
+        'perks': '⚡ Liste des Perks'
+      };
+      document.getElementById('cat-title').innerText = titleMap[type];
+      renderCategoryList();
+      document.getElementById('cat-modal').classList.add('active');
+    }
+
+    function renderCategoryList() {
+      const listEl = document.getElementById('cat-items-list');
+      listEl.innerHTML = '';
+      let targetArray = getArrayByType(activeCategoryType);
+
+      if (targetArray.length === 0) {
+        listEl.innerHTML = '<li style="color:var(--text-muted); font-size:0.8rem; padding:8px;">Aucun enregistrement pour le moment.</li>';
+        return;
       }
+
+      targetArray.sort().forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'saved-item';
+        li.innerHTML = `<span>${escapeHtml(item)}</span><button onclick="removeCatItem('${escapeHtml(item)}')">✕</button>`;
+        listEl.appendChild(li);
+      });
+    }
+
+    function getArrayByType(type) {
+      if (type === 'survivors') return savedSurvivors;
+      if (type === 'killers') return savedKillers;
+      if (type === 'maps') return savedMaps;
+      if (type === 'perks') return savedPerks;
+      return [];
+    }
+
+    function addManualCatItem() {
+      const input = document.getElementById('new-cat-item');
+      const val = input.value.trim();
+      if (!val) return;
+      let targetArray = getArrayByType(activeCategoryType);
+
+      if (!targetArray.includes(val)) {
+        targetArray.push(val);
+        saveArrayByType(activeCategoryType);
+        updateDatalists();
+        renderCategoryList();
+      }
+      input.value = '';
+    }
+
+    function removeCatItem(item) {
+      let targetArray = getArrayByType(activeCategoryType);
+      const index = targetArray.indexOf(item);
+      if (index !== -1) {
+        targetArray.splice(index, 1);
+        saveArrayByType(activeCategoryType);
+        updateDatalists();
+        renderCategoryList();
+      }
+    }
+
+    function saveArrayByType(type) {
+      if (type === 'survivors') localStorage.setItem('dbd_saved_survivors', JSON.stringify(savedSurvivors));
+      if (type === 'killers') localStorage.setItem('dbd_saved_killers', JSON.stringify(savedKillers));
+      if (type === 'maps') localStorage.setItem('dbd_saved_maps', JSON.stringify(savedMaps));
+      if (type === 'perks') localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
     }
 
     function openModal(editId = null) {
-      form.reset();
+      document.getElementById('match-form').reset();
       document.getElementById('match-id').value = '';
-      document.getElementById('modal-title').innerText = "Nouvelle Partie";
-      updateAllDatalists();
+      updateDatalists();
 
       if (editId) {
-        const match = matches.find(m => m.id === editId);
-        if (match) {
-          document.getElementById('match-id').value = match.id;
-          document.getElementById('survivor').value = match.survivor || '';
-          document.getElementById('killer').value = match.killer || '';
-          document.getElementById('map').value = match.map || '';
-          document.getElementById('gens').value = match.gens;
-          document.getElementById('escaped').value = match.escaped;
-          document.getElementById('hooks').value = match.hooks !== undefined ? match.hooks : 0;
-          document.getElementById('notes').value = match.notes || '';
-          document.querySelector(`input[name="status"][value="${match.status}"]`).checked = true;
-          const perks = match.perks || [];
-          document.getElementById('perk1').value = perks[0] || '';
-          document.getElementById('perk2').value = perks[1] || '';
-          document.getElementById('perk3').value = perks[2] || '';
-          document.getElementById('perk4').value = perks[3] || '';
-          document.getElementById('modal-title').innerText = "Modifier la Partie";
+        const m = matches.find(x => x.id === editId);
+        if (m) {
+          document.getElementById('match-id').value = m.id;
+          document.getElementById('survivor').value = m.survivor || '';
+          document.getElementById('killer').value = m.killer || '';
+          document.getElementById('map').value = m.map || '';
+          document.getElementById('gens').value = m.gens;
+          document.getElementById('escaped').value = m.escaped;
+          document.getElementById('notes').value = m.notes || '';
+          document.querySelector(`input[name="status"][value="${m.status}"]`).checked = true;
+          const p = m.perks || [];
+          document.getElementById('perk1').value = p[0] || '';
+          document.getElementById('perk2').value = p[1] || '';
+          document.getElementById('perk3').value = p[2] || '';
+          document.getElementById('perk4').value = p[3] || '';
         }
       }
-      modal.classList.add('active');
+      document.getElementById('modal').classList.add('active');
     }
 
-    function closeModal() {
-      modal.classList.remove('active');
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
     }
 
-    form.addEventListener('submit', (e) => {
+    document.getElementById('match-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const id = document.getElementById('match-id').value;
-      const rawSurvivor = document.getElementById('survivor').value.trim();
-      const rawKiller = document.getElementById('killer').value.trim();
-      const rawMap = document.getElementById('map').value.trim();
-
-      const survivor = rawSurvivor ? rawSurvivor.charAt(0).toUpperCase() + rawSurvivor.slice(1) : '';
-      const killer = rawKiller ? rawKiller.charAt(0).toUpperCase() + rawKiller.slice(1) : 'Tueur Inconnu';
-      const map = rawMap ? rawMap.charAt(0).toUpperCase() + rawMap.slice(1) : 'Map non spécifiée';
-      
+      const survivor = document.getElementById('survivor').value.trim();
+      const killer = document.getElementById('killer').value.trim() || 'Tueur Inconnu';
+      const map = document.getElementById('map').value.trim() || 'Map non spécifiée';
       const gens = document.getElementById('gens').value;
       const status = document.querySelector('input[name="status"]:checked').value;
       const escaped = document.getElementById('escaped').value;
-      const hooks = document.getElementById('hooks').value;
       const notes = document.getElementById('notes').value.trim();
 
       const perks = [
@@ -749,54 +639,22 @@
         document.getElementById('perk4').value.trim()
       ].filter(p => p !== '');
 
-      // Auto-Enregistrement dans l'historique
-      if (survivor && !savedSurvivors.includes(survivor)) {
-        savedSurvivors.push(survivor);
-        localStorage.setItem('dbd_saved_survivors', JSON.stringify(savedSurvivors));
-      }
-
-      if (killer && !savedKillers.includes(killer)) {
-        savedKillers.push(killer);
-        localStorage.setItem('dbd_saved_killers', JSON.stringify(savedKillers));
-      }
-
-      if (map && map !== 'Map non spécifiée' && !savedMaps.includes(map)) {
-        savedMaps.push(map);
-        localStorage.setItem('dbd_saved_maps', JSON.stringify(savedMaps));
-      }
-
-      perks.forEach(p => {
-        if (!savedPerks.includes(p)) {
-          savedPerks.push(p);
-        }
-      });
-      localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
+      // Auto-Enregistrement
+      if (survivor && !savedSurvivors.includes(survivor)) { savedSurvivors.push(survivor); saveArrayByType('survivors'); }
+      if (killer && !savedKillers.includes(killer)) { savedKillers.push(killer); saveArrayByType('killers'); }
+      if (map && map !== 'Map non spécifiée' && !savedMaps.includes(map)) { savedMaps.push(map); saveArrayByType('maps'); }
+      perks.forEach(p => { if (!savedPerks.includes(p)) savedPerks.push(p); });
+      saveArrayByType('perks');
 
       if (id) {
-        const index = matches.findIndex(m => m.id === id);
-        if (index !== -1) {
-          matches[index] = { id, survivor, killer, map, gens, status, escaped, hooks, notes, perks, date: matches[index].date };
-        }
+        const idx = matches.findIndex(m => m.id === id);
+        if (idx !== -1) matches[idx] = { id, survivor, killer, map, gens, status, escaped, notes, perks };
       } else {
-        const newMatch = {
-          id: Date.now().toString(),
-          survivor,
-          killer,
-          map,
-          gens,
-          status,
-          escaped,
-          hooks,
-          notes,
-          perks,
-          date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        matches.unshift(newMatch);
-        playSound(status);
+        matches.unshift({ id: Date.now().toString(), survivor, killer, map, gens, status, escaped, notes, perks });
       }
 
       localStorage.setItem('dbd_matches', JSON.stringify(matches));
-      closeModal();
+      closeModal('modal');
       render();
     });
 
@@ -810,76 +668,9 @@
 
     function switchTab(tab, e) {
       currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      if (e && e.currentTarget) e.currentTarget.classList.add('active');
-
-      const matchList = document.getElementById('match-list');
-      const statsView = document.getElementById('stats-view');
-
-      if (tab === 'stats') {
-        matchList.style.display = 'none';
-        statsView.classList.add('active');
-        calculateStats();
-      } else {
-        matchList.style.display = 'flex';
-        statsView.classList.remove('active');
-        render();
-      }
-    }
-
-    function calculateStats() {
-      const total = matches.length;
-      if (total === 0) {
-        document.getElementById('stat-survival').innerText = '0%';
-        document.getElementById('stat-deadliest').innerText = '-';
-        document.getElementById('stat-killers').innerHTML = '<li class="stat-item">Aucune partie enregistrée</li>';
-        return;
-      }
-
-      const escapedCount = matches.filter(m => m.status === 'green' || m.status === 'orange').length;
-      const survivalRate = Math.round((escapedCount / total) * 100);
-      document.getElementById('stat-survival').innerText = `${survivalRate}% (${escapedCount}/${total})`;
-
-      const killerAppearances = {};
-      const killerDeaths = {};
-
-      matches.forEach(m => {
-        const k = m.killer;
-        killerAppearances[k] = (killerAppearances[k] || 0) + 1;
-        if (m.status === 'red') {
-          killerDeaths[k] = (killerDeaths[k] || 0) + 1;
-        }
-      });
-
-      let deadliestKiller = '-';
-      let maxDeathRate = -1;
-
-      Object.keys(killerAppearances).forEach(k => {
-        const deaths = killerDeaths[k] || 0;
-        const rate = deaths / killerAppearances[k];
-        if (rate > maxDeathRate) {
-          maxDeathRate = rate;
-          deadliestKiller = k;
-        }
-      });
-
-      const deadliestPercent = Math.round((maxDeathRate) * 100);
-      document.getElementById('stat-deadliest').innerText = `${deadliestKiller} (${deadliestPercent}% mortel)`;
-
-      const killerList = document.getElementById('stat-killers');
-      killerList.innerHTML = '';
-
-      const sortedKillers = Object.keys(killerAppearances).sort((a,b) => killerAppearances[b] - killerAppearances[a]);
-
-      sortedKillers.forEach(k => {
-        const count = killerAppearances[k];
-        const percent = Math.round((count / total) * 100);
-        
-        const li = document.createElement('li');
-        li.className = 'stat-item';
-        li.innerHTML = `<span>🔪 ${escapeHtml(k)}</span> <b>${percent}% (${count} game${count > 1 ? 's' : ''})</b>`;
-        killerList.appendChild(li);
-      });
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (e) e.currentTarget.classList.add('active');
+      render();
     }
 
     function render() {
@@ -887,21 +678,10 @@
       const listContainer = document.getElementById('match-list');
       listContainer.innerHTML = '';
 
-      const countAll = matches.length;
-      const countGreen = matches.filter(m => m.status === 'green').length;
-      const countOrange = matches.filter(m => m.status === 'orange').length;
-      const countRed = matches.filter(m => m.status === 'red').length;
-
-      document.getElementById('count-all').innerText = countAll;
-      document.getElementById('count-green').innerText = countGreen;
-      document.getElementById('count-orange').innerText = countOrange;
-      document.getElementById('count-red').innerText = countRed;
-
-      // Update Streak Dots (Dernières 10 parties)
+      // Render Streak
       const streakContainer = document.getElementById('streak-dots');
       streakContainer.innerHTML = '';
       const recentMatches = matches.slice(0, 10).reverse();
-
       if (recentMatches.length === 0) {
         streakContainer.innerHTML = '<span style="color:var(--text-muted); font-size:0.75rem;">Aucune partie</span>';
       } else {
@@ -913,119 +693,51 @@
         });
       }
 
-      // Filter Matches
       const filtered = matches.filter(m => {
         const matchesTab = (currentTab === 'all') || (m.status === currentTab);
         const matchesSearch = !searchQuery || 
           m.killer.toLowerCase().includes(searchQuery) ||
           m.map.toLowerCase().includes(searchQuery) ||
           (m.survivor && m.survivor.toLowerCase().includes(searchQuery)) ||
-          (m.notes && m.notes.toLowerCase().includes(searchQuery)) ||
           (m.perks && m.perks.some(p => p.toLowerCase().includes(searchQuery)));
         return matchesTab && matchesSearch;
       });
 
       if (filtered.length === 0) {
-        listContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Aucune partie trouvée.</div>';
+        listContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Aucun enregistrement.</div>';
         return;
       }
 
       filtered.forEach(m => {
         const card = document.createElement('div');
         card.className = `match-card status-${m.status}`;
-
-        let statusText = m.status === 'green' ? '🟢 Sorti par la porte' : m.status === 'orange' ? '🟠 Sorti par la trappe' : '🔴 Mort';
-
-        let perksHTML = '';
-        if (m.perks && m.perks.length > 0) {
-          perksHTML = `
-            <div class="card-perks-title">Perks jouées:</div>
-            <div class="card-perks-list">
-              ${m.perks.map(p => `<span class="card-perk-tag">${escapeHtml(p)}</span>`).join('')}
-            </div>
-          `;
-        }
+        let statusText = m.status === 'green' ? '🟢 Porte' : m.status === 'orange' ? '🟠 Trappe' : '🔴 Mort';
 
         card.innerHTML = `
           <div class="card-actions">
-            <button class="btn-icon" onclick="openModal('${m.id}')" title="Modifier">✏️</button>
-            <button class="btn-icon" onclick="deleteMatch('${m.id}')" title="Supprimer">🗑️</button>
+            <button class="btn-icon" onclick="openModal('${m.id}')">✏️</button>
+            <button class="btn-icon" onclick="deleteMatch('${m.id}')">🗑️</button>
           </div>
-          <div class="card-header">
-            <div class="card-killer">🔪 ${escapeHtml(m.killer)}</div>
-            <div class="card-map">🗺️ ${escapeHtml(m.map)}</div>
-          </div>
+          <div class="card-killer">🔪 ${escapeHtml(m.killer)}</div>
+          <div class="card-map">🗺️ ${escapeHtml(m.map)}</div>
           <div class="card-details">
             ${m.survivor ? `<span>👤 <b>${escapeHtml(m.survivor)}</b></span>` : ''}
             <span>⚡ Gen: <b>${m.gens}/5</b></span>
-            <span>🏃‍♂️ Survivants: <b>${m.escaped}/4</b></span>
-            <span>🪝 Accroché: <b>${m.hooks || 0}x</b></span>
             <span>Résultat: <b>${statusText}</b></span>
           </div>
-          ${perksHTML}
-          ${m.notes ? `<div class="card-notes">📝 ${escapeHtml(m.notes)}</div>` : ''}
+          ${m.perks && m.perks.length > 0 ? `<div class="card-perks-list">${m.perks.map(p => `<span class="card-perk-tag">${escapeHtml(p)}</span>`).join('')}</div>` : ''}
         `;
-
         listContainer.appendChild(card);
       });
     }
 
     function escapeHtml(text) {
       if (!text) return '';
-      return text.replace(/[&<>"']/g, function(m) {
-        return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[m];
-      });
+      return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
     }
 
-    function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
-        matches, savedPerks, savedSurvivors, savedKillers, savedMaps
-      }));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `dbd_tracker_backup_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    function importData(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (Array.isArray(imported)) {
-            matches = imported;
-          } else {
-            matches = imported.matches || [];
-            savedPerks = imported.savedPerks || [];
-            savedSurvivors = imported.savedSurvivors || [];
-            savedKillers = imported.savedKillers || [];
-            savedMaps = imported.savedMaps || [];
-          }
-          localStorage.setItem('dbd_matches', JSON.stringify(matches));
-          localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
-          localStorage.setItem('dbd_saved_survivors', JSON.stringify(savedSurvivors));
-          localStorage.setItem('dbd_saved_killers', JSON.stringify(savedKillers));
-          localStorage.setItem('dbd_saved_maps', JSON.stringify(savedMaps));
-          alert('Données importées avec succès !');
-          render();
-        } catch (err) {
-          alert('Erreur lors de l\'importation du fichier.');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    // Initialisation
+    // Init
+    updateDatalists();
     render();
   </script>
 </body>
