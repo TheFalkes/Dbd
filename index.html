@@ -153,6 +153,17 @@
       text-transform: uppercase;
     }
 
+    .btn-secondary {
+      padding: 8px 12px;
+      background: var(--card-header);
+      border: 1px solid var(--border-color);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     .search-box {
       margin-bottom: 10px;
     }
@@ -255,15 +266,18 @@
     .perk-label { font-size: 0.6rem; color: var(--accent-purple); font-weight: bold; }
     .perk-input { background: transparent !important; border: none !important; padding: 2px 0 !important; font-size: 13px !important; color: #fff !important; }
 
-    /* Custom Views */
+    /* Custom Views & Stats */
     .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
     .stat-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center; }
-    .stat-val { font-size: 1.3rem; font-weight: bold; color: #fff; }
-    .stat-lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+    .stat-val { font-size: 1.2rem; font-weight: bold; color: #fff; }
+    .stat-lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
+    .stat-sub { font-size: 0.72rem; color: #aaa; margin-top: 2px; }
 
-    .stat-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 12px; }
-    .stat-table th, .stat-table td { padding: 6px; text-align: left; border-bottom: 1px solid var(--border-color); }
-    .stat-table th { color: var(--text-muted); font-size: 0.68rem; text-transform: uppercase; }
+    .rank-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .rank-title { font-size: 0.85rem; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
+    .rank-list { list-style: none; }
+    .rank-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #222; font-size: 0.82rem; }
+    .rank-item:last-child { border-bottom: none; }
 
     .saved-list { list-style: none; max-height: 200px; overflow-y: auto; }
     .saved-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: #0b0b0e; border: 1px solid var(--border-color); margin-bottom: 4px; border-radius: 4px; font-size: 0.85rem;}
@@ -371,18 +385,32 @@
   </div>
 
   <script>
-    // LocalStorage Data
-    let matches = JSON.parse(localStorage.getItem('dbd_v4_matches')) || [];
-    let savedSurvivors = JSON.parse(localStorage.getItem('dbd_v4_survivors')) || [];
-    let savedKillers = JSON.parse(localStorage.getItem('dbd_v4_killers')) || [];
-    let savedMaps = JSON.parse(localStorage.getItem('dbd_v4_maps')) || [];
-    let savedPerksSurv = JSON.parse(localStorage.getItem('dbd_v4_perks_surv')) || [];
+    // LocalStorage Data + Automatic Backward Compatibility
+    let matches = JSON.parse(localStorage.getItem('dbd_v4_matches')) || JSON.parse(localStorage.getItem('dbd_matches')) || [];
+    let savedSurvivors = JSON.parse(localStorage.getItem('dbd_v4_survivors')) || JSON.parse(localStorage.getItem('dbd_survivors')) || [];
+    let savedKillers = JSON.parse(localStorage.getItem('dbd_v4_killers')) || JSON.parse(localStorage.getItem('dbd_killers')) || [];
+    let savedMaps = JSON.parse(localStorage.getItem('dbd_v4_maps')) || JSON.parse(localStorage.getItem('dbd_maps')) || [];
+    let savedPerksSurv = JSON.parse(localStorage.getItem('dbd_v4_perks_surv')) || JSON.parse(localStorage.getItem('dbd_perks')) || [];
     let savedPerksKiller = JSON.parse(localStorage.getItem('dbd_v4_perks_killer')) || [];
-    let savedImages = JSON.parse(localStorage.getItem('dbd_v4_images')) || {};
+    let savedImages = JSON.parse(localStorage.getItem('dbd_v4_images')) || JSON.parse(localStorage.getItem('dbd_images')) || {};
+
+    // Standardize legacy matches
+    matches.forEach(m => {
+      if (!m.role) m.role = 'survivor';
+    });
+
+    // Save standardized back to localStorage
+    localStorage.setItem('dbd_v4_matches', JSON.stringify(matches));
+    localStorage.setItem('dbd_v4_survivors', JSON.stringify(savedSurvivors));
+    localStorage.setItem('dbd_v4_killers', JSON.stringify(savedKillers));
+    localStorage.setItem('dbd_v4_maps', JSON.stringify(savedMaps));
+    localStorage.setItem('dbd_v4_perks_surv', JSON.stringify(savedPerksSurv));
+    localStorage.setItem('dbd_v4_perks_killer', JSON.stringify(savedPerksKiller));
+    localStorage.setItem('dbd_v4_images', JSON.stringify(savedImages));
 
     // State Variables
-    let currentRole = 'survivor'; // 'survivor' or 'killer'
-    let currentNavTab = 'matches'; // 'matches', 'random', 'stats', 'settings'
+    let currentRole = 'survivor';
+    let currentNavTab = 'matches';
     let currentOutcomeFilter = 'all';
 
     // Switch Survivor / Killer Mode
@@ -570,7 +598,6 @@
         `;
       }
 
-      // Setup dropdowns inside modal
       setupCustomDropdown('form-map', 'drop-form-map', savedMaps, 'maps');
       setupCustomDropdown('form-killer', 'drop-form-killer', savedKillers, 'killers');
       if (currentRole === 'survivor') {
@@ -584,7 +611,6 @@
       setupCustomDropdown('perk3', 'drop-perk3', activePerksList, perkPrefix);
       setupCustomDropdown('perk4', 'drop-perk4', activePerksList, perkPrefix);
 
-      // Edit Mode Data Population
       if (editId) {
         const m = matches.find(x => x.id === editId);
         if (m) {
@@ -637,7 +663,6 @@
         document.getElementById('perk4').value.trim()
       ].filter(p => p !== '');
 
-      // Save new Auto-complete items
       if (killer && !savedKillers.includes(killer)) { savedKillers.push(killer); localStorage.setItem('dbd_v4_killers', JSON.stringify(savedKillers)); }
       if (map && map !== 'Map Inconnue' && !savedMaps.includes(map)) { savedMaps.push(map); localStorage.setItem('dbd_v4_maps', JSON.stringify(savedMaps)); }
 
@@ -698,13 +723,11 @@
       const roleMatches = matches.filter(m => m.role === currentRole);
 
       const filtered = roleMatches.filter(m => {
-        // Outcome filter
         let passOutcome = false;
         if (currentOutcomeFilter === 'all') passOutcome = true;
         else if (currentRole === 'survivor') passOutcome = m.outcome === currentOutcomeFilter;
         else if (currentRole === 'killer') passOutcome = m.kills === currentOutcomeFilter.replace('k', '');
 
-        // Search filter
         const passSearch = !search || 
           m.killer.toLowerCase().includes(search) ||
           m.map.toLowerCase().includes(search) ||
@@ -723,7 +746,6 @@
         const card = document.createElement('div');
         card.className = 'match-card';
 
-        // Images
         const killerImg = savedImages[`killers_${m.killer}`];
         const killerImgHtml = killerImg ? `<img src="${killerImg}" class="img-thumb">` : '';
 
@@ -757,7 +779,6 @@
             }).join('')}</div>` : ''}
           `;
         } else {
-          // Killer Match Card
           card.style.borderLeftColor = m.kills === '4' ? 'var(--accent-red)' : m.kills === '3' ? 'var(--accent-orange)' : 'var(--accent-blue)';
           
           card.innerHTML = `
@@ -837,7 +858,7 @@
       `;
     }
 
-    // Render Stats View
+    // Render Detailed Stats View
     function renderStats() {
       const container = document.getElementById('view-stats');
       const roleMatches = matches.filter(m => m.role === currentRole);
@@ -852,39 +873,171 @@
         const green = roleMatches.filter(m => m.outcome === 'green').length;
         const orange = roleMatches.filter(m => m.outcome === 'orange').length;
         const red = roleMatches.filter(m => m.outcome === 'red').length;
-        const escapeRate = (((green + orange) / total) * 100).toFixed(1);
+        
+        const survRate = (((green + orange) / total) * 100).toFixed(1);
+        const greenRate = ((green / total) * 100).toFixed(1);
+        const orangeRate = ((orange / total) * 100).toFixed(1);
+        const redRate = ((red / total) * 100).toFixed(1);
+
+        const totalGens = roleMatches.reduce((acc, m) => acc + (parseInt(m.gens) || 0), 0);
+        const avgGens = (totalGens / total).toFixed(1);
+
+        // Calculate Killers Frequency
+        let killerCounts = {};
+        roleMatches.forEach(m => {
+          const k = m.killer || 'Inconnu';
+          killerCounts[k] = (killerCounts[k] || 0) + 1;
+        });
+        const sortedKillers = Object.keys(killerCounts).sort((a,b) => killerCounts[b] - killerCounts[a]);
+
+        // Calculate Maps Frequency
+        let mapCounts = {};
+        roleMatches.forEach(m => {
+          const map = m.map || 'Inconnue';
+          mapCounts[map] = (mapCounts[map] || 0) + 1;
+        });
+        const sortedMaps = Object.keys(mapCounts).sort((a,b) => mapCounts[b] - mapCounts[a]);
 
         container.innerHTML = `
+          <!-- Global Box -->
           <div class="stats-grid">
-            <div class="stat-box"><div class="stat-lbl">Parties</div><div class="stat-val" style="color:var(--accent-blue);">${total}</div></div>
-            <div class="stat-box"><div class="stat-lbl">Survie</div><div class="stat-val" style="color:var(--accent-green);">${escapeRate}%</div></div>
-            <div class="stat-box"><div class="stat-lbl">🟢 Porte</div><div class="stat-val">${green}</div></div>
-            <div class="stat-box"><div class="stat-lbl">🔴 Mort</div><div class="stat-val" style="color:var(--accent-red);">${red}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Parties Jouées</div><div class="stat-val" style="color:var(--accent-blue);">${total}</div></div>
+            <div class="stat-box"><div class="stat-lbl">% Survie Globale</div><div class="stat-val" style="color:var(--accent-green);">${survRate}%</div></div>
+            <div class="stat-box">
+              <div class="stat-lbl">🟢 Sorties Porte</div>
+              <div class="stat-val" style="color:var(--accent-green);">${greenRate}%</div>
+              <div class="stat-sub">${green} fois</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">🟠 Sorties Trappe</div>
+              <div class="stat-val" style="color:var(--accent-orange);">${orangeRate}%</div>
+              <div class="stat-sub">${orange} fois</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">🔴 Morts</div>
+              <div class="stat-val" style="color:var(--accent-red);">${redRate}%</div>
+              <div class="stat-sub">${red} fois</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">⚡ Gens faits</div>
+              <div class="stat-val" style="color:#f1c40f;">${avgGens} <span style="font-size:0.7rem; color:#aaa;">/5</span></div>
+              <div class="stat-sub">Total : ${totalGens} gens</div>
+            </div>
+          </div>
+
+          <!-- Killers Ranking -->
+          <div class="rank-section">
+            <div class="rank-title">🔪 Tueurs Affrontés (Du + au - fréquent)</div>
+            <ul class="rank-list">
+              ${sortedKillers.map(k => {
+                const count = killerCounts[k];
+                const pct = ((count / total) * 100).toFixed(1);
+                const kImg = savedImages[`killers_${k}`];
+                const kImgHtml = kImg ? `<img src="${kImg}" class="img-thumb">` : '';
+                return `
+                  <li class="rank-item">
+                    <div style="display:flex; align-items:center; gap:6px;">${kImgHtml} <span>${escapeHtml(k)}</span></div>
+                    <div><b>${pct}%</b> <span style="font-size:0.7rem; color:var(--text-muted);">(${count})</span></div>
+                  </li>
+                `;
+              }).join('')}
+            </ul>
+          </div>
+
+          <!-- Maps Ranking -->
+          <div class="rank-section">
+            <div class="rank-title">🗺️ Maps Jouées (Du + au - fréquent)</div>
+            <ul class="rank-list">
+              ${sortedMaps.map(m => {
+                const count = mapCounts[m];
+                const pct = ((count / total) * 100).toFixed(1);
+                const mImg = savedImages[`maps_${m}`];
+                const mImgHtml = mImg ? `<img src="${mImg}" class="img-thumb square">` : '';
+                return `
+                  <li class="rank-item">
+                    <div style="display:flex; align-items:center; gap:6px;">${mImgHtml} <span>${escapeHtml(m)}</span></div>
+                    <div><b>${pct}%</b> <span style="font-size:0.7rem; color:var(--text-muted);">(${count})</span></div>
+                  </li>
+                `;
+              }).join('')}
+            </ul>
           </div>
         `;
       } else {
-        const totalKills = roleMatches.reduce((acc, m) => acc + parseInt(m.kills), 0);
+        // Killer Mode Stats
+        const totalKills = roleMatches.reduce((acc, m) => acc + parseInt(m.kills || 0), 0);
         const avgKills = (totalKills / total).toFixed(1);
-        const k4 = roleMatches.filter(m => m.kills === '4').length;
+
+        const totalGensBySurvs = roleMatches.reduce((acc, m) => acc + (parseInt(m.gens) || 0), 0);
+        const avgGensBySurvs = (totalGensBySurvs / total).toFixed(1);
+        const gensPct = (((totalGensBySurvs) / (total * 5)) * 100).toFixed(1);
+
+        // Calculate Maps Frequency
+        let mapCounts = {};
+        roleMatches.forEach(m => {
+          const map = m.map || 'Inconnue';
+          mapCounts[map] = (mapCounts[map] || 0) + 1;
+        });
+        const sortedMaps = Object.keys(mapCounts).sort((a,b) => mapCounts[b] - mapCounts[a]);
 
         container.innerHTML = `
+          <!-- Global Box -->
           <div class="stats-grid">
             <div class="stat-box"><div class="stat-lbl">Parties Jouées</div><div class="stat-val" style="color:var(--accent-blue);">${total}</div></div>
-            <div class="stat-box"><div class="stat-lbl">Moyenne Kills</div><div class="stat-val" style="color:var(--accent-red);">${avgKills} / 4</div></div>
-            <div class="stat-box"><div class="stat-lbl">Total Kills</div><div class="stat-val">${totalKills}</div></div>
-            <div class="stat-box"><div class="stat-lbl">4K Perfects</div><div class="stat-val" style="color:var(--accent-green);">${k4}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Total Kills</div><div class="stat-val" style="color:var(--accent-red);">${totalKills}</div></div>
+            <div class="stat-box">
+              <div class="stat-lbl">☠️ Moyenne Kills</div>
+              <div class="stat-val" style="color:var(--accent-orange);">${avgKills} <span style="font-size:0.7rem; color:#aaa;">/4</span></div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">⚡ Gens faits p/ Survs</div>
+              <div class="stat-val" style="color:#f1c40f;">${avgGensBySurvs} <span style="font-size:0.7rem; color:#aaa;">/5</span></div>
+              <div class="stat-sub">Total : ${totalGensBySurvs} gens (${gensPct}%)</div>
+            </div>
+          </div>
+
+          <!-- Maps Ranking -->
+          <div class="rank-section">
+            <div class="rank-title">🗺️ Maps Jouées (Du + au - fréquent)</div>
+            <ul class="rank-list">
+              ${sortedMaps.map(m => {
+                const count = mapCounts[m];
+                const pct = ((count / total) * 100).toFixed(1);
+                const mImg = savedImages[`maps_${m}`];
+                const mImgHtml = mImg ? `<img src="${mImg}" class="img-thumb square">` : '';
+                return `
+                  <li class="rank-item">
+                    <div style="display:flex; align-items:center; gap:6px;">${mImgHtml} <span>${escapeHtml(m)}</span></div>
+                    <div><b>${pct}%</b> <span style="font-size:0.7rem; color:var(--text-muted);">(${count})</span></div>
+                  </li>
+                `;
+              }).join('')}
+            </ul>
           </div>
         `;
       }
     }
 
-    // Render Settings & Lists View
+    // Render Settings & Import / Export View
     let activeSettingCategory = 'survivors';
 
     function renderSettings() {
       const container = document.getElementById('view-settings');
       container.innerHTML = `
+        <!-- Backup & Restore Box -->
         <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:12px; margin-bottom:12px;">
+          <h4 style="margin-bottom:8px; font-size:0.9rem;">💾 Sauvegarde & Restauration</h4>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-secondary" style="flex:1; background:var(--accent-blue);" onclick="exportData()">📥 Exporter Données</button>
+            <label class="btn-secondary" style="flex:1; background:var(--accent-green); text-align:center; cursor:pointer;">
+              📤 Importer Données
+              <input type="file" accept=".json" style="display:none;" onchange="importData(event)">
+            </label>
+          </div>
+        </div>
+
+        <!-- Custom Lists & Photos Box -->
+        <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:12px;">
           <h4 style="margin-bottom:8px; font-size:0.9rem;">🖼️ Gestion des Éléments & Photos</h4>
           <div class="filter-bar" style="margin-bottom:10px;">
             <button class="sub-filter-btn ${activeSettingCategory==='survivors'?'active':''}" onclick="setSettingCategory('survivors')">👤 Survs</button>
@@ -904,6 +1057,59 @@
       `;
 
       renderSettingsItemsList();
+    }
+
+    // Export Data Function
+    function exportData() {
+      const fullBackup = {
+        matches,
+        savedSurvivors,
+        savedKillers,
+        savedMaps,
+        savedPerksSurv,
+        savedPerksKiller,
+        savedImages
+      };
+
+      const blob = new Blob([JSON.stringify(fullBackup, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `dbd_tracker_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+    }
+
+    // Import Data Function
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.matches) matches = data.matches;
+          if (data.savedSurvivors) savedSurvivors = data.savedSurvivors;
+          if (data.savedKillers) savedKillers = data.savedKillers;
+          if (data.savedMaps) savedMaps = data.savedMaps;
+          if (data.savedPerksSurv) savedPerksSurv = data.savedPerksSurv;
+          if (data.savedPerksKiller) savedPerksKiller = data.savedPerksKiller;
+          if (data.savedImages) savedImages = data.savedImages;
+
+          localStorage.setItem('dbd_v4_matches', JSON.stringify(matches));
+          localStorage.setItem('dbd_v4_survivors', JSON.stringify(savedSurvivors));
+          localStorage.setItem('dbd_v4_killers', JSON.stringify(savedKillers));
+          localStorage.setItem('dbd_v4_maps', JSON.stringify(savedMaps));
+          localStorage.setItem('dbd_v4_perks_surv', JSON.stringify(savedPerksSurv));
+          localStorage.setItem('dbd_v4_perks_killer', JSON.stringify(savedPerksKiller));
+          localStorage.setItem('dbd_v4_images', JSON.stringify(savedImages));
+
+          alert('✅ Restauration effectuée avec succès !');
+          render();
+        } catch (err) {
+          alert('❌ Fichier JSON invalide ou corrompu.');
+        }
+      };
+      reader.readAsText(file);
     }
 
     function setSettingCategory(cat) {
