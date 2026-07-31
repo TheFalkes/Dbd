@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DBD Match Tracker V3</title>
+  <title>DBD Match Tracker V4</title>
   <style>
     :root {
       --bg-color: #0a0a0c;
@@ -19,7 +19,6 @@
       --border-color: #262630;
       --perk-bg: #1e1e26;
       --perk-border: #3a3a4a;
-      --perk-accent: #8e44ad;
     }
 
     * {
@@ -30,323 +29,145 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
+    body {
       background-color: var(--bg-color);
       color: var(--text-color);
-    }
-
-    body {
       padding: 12px;
       max-width: 600px;
       margin: 0 auto;
-      padding-bottom: 30px;
+      padding-bottom: 40px;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: #fff;
-      font-size: 1.4rem;
-      text-shadow: 0 0 10px rgba(217, 43, 43, 0.6);
+      font-size: 1.3rem;
+      text-shadow: 0 0 10px rgba(217, 43, 43, 0.5);
     }
 
-    /* Streak Bar */
-    .streak-container {
-      background: var(--card-bg);
+    /* Mode Switcher Header */
+    .mode-switch-container {
+      display: flex;
+      background: #111116;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 8px 12px;
+      border-radius: 10px;
+      padding: 4px;
       margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
     }
 
-    .streak-title {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-
-    .streak-dots {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 2px 0;
-    }
-
-    .streak-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: bold;
-      color: white;
-      flex-shrink: 0;
-    }
-    .streak-dot.green { background: var(--accent-green); }
-    .streak-dot.orange { background: var(--accent-orange); }
-    .streak-dot.red { background: var(--accent-red); }
-
-    /* Controls */
-    .search-box {
-      margin-bottom: 8px;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      color: white;
-      font-size: 16px;
-    }
-
-    .category-nav {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
-      overflow-x: auto;
-    }
-
-    .cat-btn {
+    .mode-btn {
       flex: 1;
-      padding: 8px;
-      background: #1a1a22;
-      border: 1px solid var(--border-color);
-      color: #fff;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
       font-weight: bold;
-      text-transform: uppercase;
+      font-size: 0.85rem;
+      border-radius: 8px;
       cursor: pointer;
       text-align: center;
-      white-space: nowrap;
+      transition: all 0.2s ease;
     }
 
-    .cat-btn:active {
+    .mode-btn.active-surv {
+      background: var(--accent-blue);
+      color: #fff;
+    }
+
+    .mode-btn.active-killer {
       background: var(--accent-red);
+      color: #fff;
     }
 
-    /* Main Button */
+    /* Main Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      background: var(--card-bg);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 8px 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .nav-btn.active {
+      background: #252530;
+      color: #fff;
+    }
+
+    /* Sub-filters (Outcome Bar) */
+    .filter-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .sub-filter-btn {
+      flex: 1;
+      padding: 6px 8px;
+      background: #121216;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .sub-filter-btn.active {
+      border-color: #fff;
+      color: #fff;
+      background: #1e1e28;
+    }
+
+    /* Buttons */
     .btn-main {
-      display: block;
       width: 100%;
       padding: 12px;
       background: var(--accent-red);
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: bold;
       cursor: pointer;
       margin-bottom: 12px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 12px rgba(217, 43, 43, 0.3);
     }
 
-    /* Modals */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 10px;
+    .search-box {
+      margin-bottom: 10px;
     }
 
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
+    .search-input {
+      width: 100%;
+      padding: 9px 12px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
-      width: 100%;
-      max-width: 500px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    /* Custom Dropdown */
-    .dropdown-container {
-      position: relative;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 4px;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      background: #0b0b0e;
-      border: 1px solid var(--border-color);
       border-radius: 6px;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
     }
 
-    .custom-dropdown-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #1a1a24;
-      border: 1px solid var(--accent-red);
-      border-radius: 0 0 6px 6px;
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 2000;
-      display: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .custom-dropdown-list.active {
-      display: block;
-    }
-
-    .dropdown-item {
-      padding: 10px 12px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      border-bottom: 1px solid var(--border-color);
-      color: #fff;
-    }
-
-    .dropdown-item:last-child {
-      border-bottom: none;
-    }
-
-    .dropdown-item:hover, .dropdown-item:active {
-      background: var(--accent-red);
-    }
-
-    .perks-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .perk-box {
-      background: var(--perk-bg);
-      border: 1px dashed var(--perk-border);
-      border-radius: 6px;
-      padding: 6px 8px;
-      position: relative;
-    }
-
-    .perk-label {
-      font-size: 0.65rem;
-      color: var(--perk-accent);
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .perk-input {
-      background: transparent !important;
-      border: none !important;
-      padding: 2px 0 !important;
-      font-size: 14px !important;
-      color: #fff !important;
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 6px;
-    }
-
-    .radio-option {
-      flex: 1;
-      text-align: center;
-    }
-
-    .radio-option input { display: none; }
-
-    .radio-option label {
-      display: block;
-      padding: 8px 4px;
-      background: #0b0b0e;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      color: var(--text-color);
-      font-weight: bold;
-    }
-
-    .radio-option input:checked + label.lbl-red { background: var(--accent-red); color: white; }
-    .radio-option input:checked + label.lbl-orange { background: var(--accent-orange); color: white; }
-    .radio-option input:checked + label.lbl-green { background: var(--accent-green); color: white; }
-    .radio-option input:checked + label.lbl-blue { background: var(--accent-blue); color: white; }
-
-    .modal-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    .btn-secondary {
-      background: #2a2a35;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      flex: 1;
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      padding: 8px 10px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      border-radius: 6px;
-      cursor: pointer;
-      white-space: nowrap;
-      font-size: 0.8rem;
-    }
-
-    .tab-btn.active {
-      background: #22222c;
-      color: white;
-      border-color: #555;
-    }
-
-    /* List & Cards */
+    /* Cards & Lists */
     .match-list {
       display: flex;
       flex-direction: column;
@@ -361,317 +182,157 @@
       position: relative;
     }
 
-    .match-card.status-red { border-left-color: var(--accent-red); }
-    .match-card.status-orange { border-left-color: var(--accent-orange); }
-    .match-card.status-green { border-left-color: var(--accent-green); }
-
     .card-actions {
       position: absolute;
       top: 10px; right: 10px;
-      display: flex; gap: 6px;
+      display: flex; gap: 8px;
     }
 
     .btn-icon {
-      background: none; border: none; color: var(--text-muted); cursor: pointer;
+      background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem;
     }
 
-    .card-killer { font-size: 1rem; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px; }
-    .card-map { font-size: 0.8rem; color: var(--text-muted); font-style: italic; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .card-title { font-size: 0.95rem; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px; }
+    .card-sub { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
 
     .card-details {
-      display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; margin: 6px 0; color: #ccc;
+      display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.78rem; margin: 6px 0; color: #ccc;
       background: #0b0b0e; padding: 6px 8px; border-radius: 6px; align-items: center;
     }
 
     .card-perks-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
     .card-perk-tag {
       background: var(--perk-bg); border: 1px solid var(--perk-border); color: #d1c4e9;
-      padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;
+      padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; display: flex; align-items: center; gap: 4px;
     }
 
-    /* Stats & Custom Views */
-    .stats-dashboard {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .stat-card-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .stat-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 12px;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: #fff;
-      margin-top: 4px;
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-
-    .stat-section-title {
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #fff;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 4px;
-    }
-
-    .stat-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-
-    .stat-table th, .stat-table td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .stat-table th {
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-    }
-
-    .saved-items-list {
-      list-style: none;
-      margin-top: 10px;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-
-    .saved-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px;
-      background: #0b0b0e;
-      border: 1px solid var(--border-color);
-      margin-bottom: 4px;
-      border-radius: 4px;
-    }
-
-    .saved-item button {
-      background: var(--accent-red);
-      color: white;
-      border: none;
-      padding: 2px 6px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    /* Thumbnail Images */
+    /* Thumbnails */
     .img-thumb {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      object-fit: cover;
-      vertical-align: middle;
-      border: 1px solid var(--border-color);
+      width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color);
     }
-    .img-thumb.square {
-      border-radius: 4px;
+    .img-thumb.square { border-radius: 4px; }
+    .img-thumb.large { width: 45px; height: 45px; }
+
+    /* Modals */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 1000; padding: 10px;
     }
-    .img-thumb.large {
-      width: 50px;
-      height: 50px;
+    .modal.active { display: flex; }
+    .modal-content {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 16px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
     }
 
-    /* Random View Elements */
-    .random-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; margin-bottom: 4px; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 9px; background: #0b0b0e; border: 1px solid var(--border-color); border-radius: 6px; color: white; font-size: 15px;
     }
 
-    .random-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 12px;
-      color: #fff;
+    /* Dropdown UI */
+    .dropdown-container { position: relative; }
+    .custom-dropdown-list {
+      position: absolute; top: 100%; left: 0; right: 0; background: #1a1a24;
+      border: 1px solid var(--accent-red); border-radius: 0 0 6px 6px; max-height: 140px;
+      overflow-y: auto; z-index: 2000; display: none;
     }
+    .custom-dropdown-list.active { display: block; }
+    .dropdown-item { padding: 8px 10px; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); color: #fff; }
+    .dropdown-item:hover { background: var(--accent-red); }
 
-    .random-character {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      background: #0b0b0e;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 12px;
+    .radio-group { display: flex; gap: 4px; }
+    .radio-option { flex: 1; text-align: center; }
+    .radio-option input { display: none; }
+    .radio-option label {
+      display: block; padding: 7px 2px; background: #0b0b0e; border: 1px solid var(--border-color);
+      border-radius: 6px; cursor: pointer; font-size: 0.75rem; color: var(--text-color); font-weight: bold;
     }
+    .radio-option input:checked + label { background: var(--accent-blue); color: white; }
 
-    .random-perks {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-top: 10px;
-    }
+    .perks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .perk-box { background: var(--perk-bg); border: 1px dashed var(--perk-border); border-radius: 6px; padding: 4px 6px; }
+    .perk-label { font-size: 0.6rem; color: var(--accent-purple); font-weight: bold; }
+    .perk-input { background: transparent !important; border: none !important; padding: 2px 0 !important; font-size: 13px !important; color: #fff !important; }
 
-    .random-perk-card {
-      background: var(--perk-bg);
-      border: 1px solid var(--perk-border);
-      border-radius: 6px;
-      padding: 8px;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    /* Custom Views */
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .stat-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center; }
+    .stat-val { font-size: 1.3rem; font-weight: bold; color: #fff; }
+    .stat-lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
 
-    /* Settings View Elements */
-    .settings-section {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-    .type-btn-group {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-    .type-btn {
-      flex: 1;
-      padding: 6px;
-      background: #0b0b0e;
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      border-radius: 4px;
-      font-size: 0.7rem;
-      cursor: pointer;
-      text-align: center;
-    }
-    .type-btn.active {
-      background: var(--accent-blue);
-      color: white;
-      border-color: var(--accent-blue);
-    }
+    .stat-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 12px; }
+    .stat-table th, .stat-table td { padding: 6px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    .stat-table th { color: var(--text-muted); font-size: 0.68rem; text-transform: uppercase; }
+
+    .saved-list { list-style: none; max-height: 200px; overflow-y: auto; }
+    .saved-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: #0b0b0e; border: 1px solid var(--border-color); margin-bottom: 4px; border-radius: 4px; font-size: 0.85rem;}
   </style>
 </head>
 <body>
 
   <h1>DBD Match Tracker</h1>
 
-  <!-- Streak Bar -->
-  <div class="streak-container">
-    <span class="streak-title">Derniers Matchs:</span>
-    <div class="streak-dots" id="streak-dots">
-      <span style="color:var(--text-muted); font-size:0.75rem;">Aucune partie</span>
+  <!-- Header Mode Switcher -->
+  <div class="mode-switch-container">
+    <button id="mode-surv-btn" class="mode-btn active-surv" onclick="switchRoleMode('survivor')">👤 Mode Survivant</button>
+    <button id="mode-killer-btn" class="mode-btn" onclick="switchRoleMode('killer')">🔪 Mode Tueur</button>
+  </div>
+
+  <!-- Main Nav Tabs -->
+  <div class="nav-tabs">
+    <button class="nav-btn active" onclick="switchNavTab('matches', event)">🎮 Matchs</button>
+    <button class="nav-btn" onclick="switchNavTab('random', event)">🎲 Random</button>
+    <button class="nav-btn" onclick="switchNavTab('stats', event)">📊 Stats</button>
+    <button class="nav-btn" onclick="switchNavTab('settings', event)">⚙️ Gestion</button>
+  </div>
+
+  <!-- Matches View Container -->
+  <div id="view-matches">
+    <button class="btn-main" id="add-match-btn" onclick="openMatchModal()">+ Nouvelle Partie</button>
+    
+    <div class="search-box">
+      <input type="text" id="search-bar" class="search-input" placeholder="🔍 Rechercher..." oninput="render()">
     </div>
-  </div>
 
-  <!-- Search & Category Navigation Bar -->
-  <div class="search-box">
-    <input type="text" id="search-bar" class="search-input" placeholder="🔍 Rechercher..." oninput="render()">
-  </div>
-  
-  <div class="category-nav">
-    <button class="cat-btn" onclick="openCategoryModal('survivors')">👤 Survivants</button>
-    <button class="cat-btn" onclick="openCategoryModal('killers')">🔪 Tueurs</button>
-    <button class="cat-btn" onclick="openCategoryModal('maps')">🗺️ Maps</button>
-    <button class="cat-btn" onclick="openCategoryModal('perks')">⚡ Perks</button>
-  </div>
+    <!-- Outcome Filter Bar -->
+    <div class="filter-bar" id="sub-filter-bar"></div>
 
-  <button class="btn-main" onclick="openModal()">+ Ajouter une partie</button>
-
-  <!-- Tabs Navigation -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('all', event)">Tous</button>
-    <button class="tab-btn" onclick="switchTab('green', event)">🟢 Porte</button>
-    <button class="tab-btn" onclick="switchTab('orange', event)">🟠 Trappe</button>
-    <button class="tab-btn" onclick="switchTab('red', event)">🔴 Non sorti</button>
-    <button class="tab-btn" style="border-color: var(--accent-blue); color: var(--accent-blue);" onclick="switchTab('stats', event)">📊 Stats</button>
-    <button class="tab-btn" style="border-color: var(--accent-purple); color: var(--accent-purple);" onclick="switchTab('random', event)">🎲 Random</button>
-    <button class="tab-btn" style="border-color: var(--text-muted); color: var(--text-color);" onclick="switchTab('settings', event)">⚙️ Paramètres</button>
-  </div>
-
-  <!-- Main View -->
-  <div id="main-container">
     <div id="match-list" class="match-list"></div>
-    <div id="stats-view" class="stats-dashboard" style="display: none;"></div>
-    <div id="random-view" style="display: none;"></div>
-    <div id="settings-view" style="display: none;"></div>
   </div>
 
-  <!-- Modal Form Add/Edit -->
-  <div class="modal" id="modal">
+  <!-- Random View -->
+  <div id="view-random" style="display: none;"></div>
+
+  <!-- Stats View -->
+  <div id="view-stats" style="display: none;"></div>
+
+  <!-- Settings / Management View -->
+  <div id="view-settings" style="display: none;"></div>
+
+  <!-- Modal Match Form -->
+  <div class="modal" id="match-modal">
     <div class="modal-content">
-      <h2 id="modal-title" style="margin-bottom: 10px;">Nouvelle Partie</h2>
+      <h3 id="modal-title" style="margin-bottom: 10px;">Partie</h3>
       <form id="match-form">
         <input type="hidden" id="match-id">
 
-        <!-- Survivant -->
-        <div class="form-group dropdown-container">
-          <label for="survivor">Survivant joué</label>
-          <input type="text" id="survivor" placeholder="Sélectionnez ou tapez..." autocomplete="off">
-          <div class="custom-dropdown-list" id="drop-survivor"></div>
-        </div>
-        
-        <!-- Tueur -->
-        <div class="form-group dropdown-container">
-          <label for="killer">Tueur</label>
-          <input type="text" id="killer" required placeholder="Sélectionnez ou tapez..." autocomplete="off">
-          <div class="custom-dropdown-list" id="drop-killer"></div>
-        </div>
+        <!-- Dynamic Survivor/Killer inputs -->
+        <div id="form-role-fields"></div>
 
         <!-- Map -->
         <div class="form-group dropdown-container">
-          <label for="map">Map</label>
-          <input type="text" id="map" placeholder="Sélectionnez ou tapez..." autocomplete="off">
-          <div class="custom-dropdown-list" id="drop-map"></div>
+          <label for="form-map">Map</label>
+          <input type="text" id="form-map" placeholder="Sélectionnez ou tapez..." autocomplete="off">
+          <div class="custom-dropdown-list" id="drop-form-map"></div>
         </div>
 
-        <div style="display:flex; gap:8px;">
-          <div class="form-group" style="flex:1;">
-            <label for="gens">Générateurs</label>
-            <input type="number" id="gens" min="0" max="5" value="5">
-          </div>
-          <div class="form-group" style="flex:1;">
-            <label for="escaped">Évadés (0-4)</label>
-            <input type="number" id="escaped" min="0" max="4" value="1">
-          </div>
-        </div>
-
-        <!-- Accrochages (Hooks) -->
-        <div class="form-group">
-          <label>Nombre d'accrochages (Hooks)</label>
-          <div class="radio-group">
-            <div class="radio-option"><input type="radio" id="hook-0" name="hooks" value="0" onchange="handleHookChange('0')"><label for="hook-0" class="lbl-blue">0 🪝</label></div>
-            <div class="radio-option"><input type="radio" id="hook-1" name="hooks" value="1" checked onchange="handleHookChange('1')"><label for="hook-1" class="lbl-blue">1 🪝</label></div>
-            <div class="radio-option"><input type="radio" id="hook-2" name="hooks" value="2" onchange="handleHookChange('2')"><label for="hook-2" class="lbl-blue">2 🪝</label></div>
-            <div class="radio-option"><input type="radio" id="hook-3" name="hooks" value="3" onchange="handleHookChange('3')"><label for="hook-3" class="lbl-blue">3+ 🪝</label></div>
-          </div>
-        </div>
+        <!-- Dynamic Game Stats fields -->
+        <div id="form-stats-fields"></div>
 
         <!-- Perks Section -->
         <div class="form-group">
-          <label>Tes Perks (4 Emplacements)</label>
+          <label id="perk-section-label">Perks Équipées</label>
           <div class="perks-grid">
             <div class="perk-box dropdown-container">
               <span class="perk-label">P1</span>
@@ -697,89 +358,118 @@
         </div>
 
         <div class="form-group">
-          <label>Résultat</label>
-          <div class="radio-group">
-            <div class="radio-option"><input type="radio" id="out-red" name="status" value="red" checked><label for="out-red" class="lbl-red">Mort 🔴</label></div>
-            <div class="radio-option"><input type="radio" id="out-orange" name="status" value="orange"><label for="out-orange" class="lbl-orange">Trappe 🟠</label></div>
-            <div class="radio-option"><input type="radio" id="out-green" name="status" value="green"><label for="out-green" class="lbl-green">Porte 🟢</label></div>
-          </div>
+          <label for="form-notes">Notes</label>
+          <textarea id="form-notes" rows="2" placeholder="Remarques sur la game..."></textarea>
         </div>
 
-        <div class="form-group">
-          <label for="notes">Notes</label>
-          <textarea id="notes" placeholder="Remarques..."></textarea>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal('modal')">Annuler</button>
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button type="button" class="btn-main" style="background:#2a2a35; margin:0;" onclick="closeModal('match-modal')">Annuler</button>
           <button type="submit" class="btn-main" style="margin:0; flex:1;">Enregistrer</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal Gestion par Onglet -->
-  <div class="modal" id="cat-modal">
-    <div class="modal-content">
-      <h3 id="cat-title" style="margin-bottom:8px;">Gestion des éléments</h3>
-      <div style="display:flex; gap:6px; margin-bottom: 10px;">
-        <input type="text" id="new-cat-item" placeholder="Ajouter manuellement..." style="flex:1; padding:8px; background:#0b0b0e; border:1px solid var(--border-color); color:#fff; border-radius:4px; font-size:16px;">
-        <button onclick="addManualCatItem()" style="background:var(--accent-green); color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold;">+</button>
-      </div>
-      <ul class="saved-items-list" id="cat-items-list"></ul>
-      <div class="modal-actions">
-        <button class="btn-secondary" onclick="closeModal('cat-modal')">Fermer</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // Storage
-    let matches = JSON.parse(localStorage.getItem('dbd_matches')) || [];
-    let savedPerks = JSON.parse(localStorage.getItem('dbd_saved_perks')) || [];
-    let savedSurvivors = JSON.parse(localStorage.getItem('dbd_saved_survivors')) || [];
-    let savedKillers = JSON.parse(localStorage.getItem('dbd_saved_killers')) || [];
-    let savedMaps = JSON.parse(localStorage.getItem('dbd_saved_maps')) || [];
-    let savedImages = JSON.parse(localStorage.getItem('dbd_saved_images')) || {};
+    // LocalStorage Data
+    let matches = JSON.parse(localStorage.getItem('dbd_v4_matches')) || [];
+    let savedSurvivors = JSON.parse(localStorage.getItem('dbd_v4_survivors')) || [];
+    let savedKillers = JSON.parse(localStorage.getItem('dbd_v4_killers')) || [];
+    let savedMaps = JSON.parse(localStorage.getItem('dbd_v4_maps')) || [];
+    let savedPerksSurv = JSON.parse(localStorage.getItem('dbd_v4_perks_surv')) || [];
+    let savedPerksKiller = JSON.parse(localStorage.getItem('dbd_v4_perks_killer')) || [];
+    let savedImages = JSON.parse(localStorage.getItem('dbd_v4_images')) || {};
 
-    let currentTab = 'all';
-    let activeCategoryType = '';
-    let selectedSettingsType = 'survivors';
+    // State Variables
+    let currentRole = 'survivor'; // 'survivor' or 'killer'
+    let currentNavTab = 'matches'; // 'matches', 'random', 'stats', 'settings'
+    let currentOutcomeFilter = 'all';
 
-    // Règle 0 accrochage = Mort automatique
-    function handleHookChange(val) {
-      if (val === '0') {
-        document.getElementById('out-red').checked = true;
-      }
+    // Switch Survivor / Killer Mode
+    function switchRoleMode(role) {
+      currentRole = role;
+      document.getElementById('mode-surv-btn').className = `mode-btn ${role === 'survivor' ? 'active-surv' : ''}`;
+      document.getElementById('mode-killer-btn').className = `mode-btn ${role === 'killer' ? 'active-killer' : ''}`;
+      
+      currentOutcomeFilter = 'all';
+      setupSubFilterBar();
+      render();
     }
 
-    // Custom Dropdown Setup
-    function setupCustomDropdown(inputId, dropId, itemsList) {
+    // Switch Main Nav Tab
+    function switchNavTab(tab, event) {
+      currentNavTab = tab;
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (event) event.currentTarget.classList.add('active');
+
+      document.getElementById('view-matches').style.display = tab === 'matches' ? 'block' : 'none';
+      document.getElementById('view-random').style.display = tab === 'random' ? 'block' : 'none';
+      document.getElementById('view-stats').style.display = tab === 'stats' ? 'block' : 'none';
+      document.getElementById('view-settings').style.display = tab === 'settings' ? 'block' : 'none';
+
+      render();
+    }
+
+    // Outcome Filter Sub-Bar
+    function setupSubFilterBar() {
+      const bar = document.getElementById('sub-filter-bar');
+      bar.innerHTML = '';
+
+      let filters = [];
+      if (currentRole === 'survivor') {
+        filters = [
+          { id: 'all', label: 'Tous' },
+          { id: 'green', label: '🟢 Porte' },
+          { id: 'orange', label: '🟠 Trappe' },
+          { id: 'red', label: '🔴 Mort' }
+        ];
+      } else {
+        filters = [
+          { id: 'all', label: 'Tous' },
+          { id: '4k', label: '☠️ 4K' },
+          { id: '3k', label: '💀 3K' },
+          { id: '2k', label: '⚔️ 2K' },
+          { id: '1k', label: '🩸 1K' },
+          { id: '0k', label: '🤡 0K' }
+        ];
+      }
+
+      filters.forEach(f => {
+        const btn = document.createElement('button');
+        btn.className = `sub-filter-btn ${currentOutcomeFilter === f.id ? 'active' : ''}`;
+        btn.innerText = f.label;
+        btn.onclick = () => {
+          currentOutcomeFilter = f.id;
+          setupSubFilterBar();
+          renderMatches();
+        };
+        bar.appendChild(btn);
+      });
+    }
+
+    // Custom Dropdown Helper
+    function setupCustomDropdown(inputId, dropId, itemsList, imgPrefix) {
       const input = document.getElementById(inputId);
       const drop = document.getElementById(dropId);
+      if (!input || !drop) return;
 
       function showDropdown() {
         closeAllDropdowns();
         const filter = input.value.toLowerCase();
         drop.innerHTML = '';
 
-        const matchingItems = itemsList.filter(item => item.toLowerCase().includes(filter));
+        const matching = itemsList.filter(item => item.toLowerCase().includes(filter));
+        if (matching.length === 0) return;
 
-        if (matchingItems.length === 0) {
-          drop.classList.remove('active');
-          return;
-        }
-
-        matchingItems.sort().forEach(item => {
+        matching.sort().forEach(item => {
           const div = document.createElement('div');
           div.className = 'dropdown-item';
-          
-          const imgKey = getItemImageKey(inputId, item);
+          const imgKey = `${imgPrefix}_${item}`;
           const imgSrc = savedImages[imgKey];
-          const imgHtml = imgSrc ? `<img src="${imgSrc}" class="img-thumb ${inputId.includes('perk') ? 'square' : ''}"> ` : '';
+          const imgHtml = imgSrc ? `<img src="${imgSrc}" class="img-thumb ${imgPrefix.includes('perks') || imgPrefix.includes('maps') ? 'square' : ''}"> ` : '';
           
           div.innerHTML = `${imgHtml}${escapeHtml(item)}`;
-          div.onmousedown = function(e) {
+          div.onmousedown = (e) => {
             e.preventDefault();
             input.value = item;
             drop.classList.remove('active');
@@ -790,136 +480,129 @@
         drop.classList.add('active');
       }
 
-      input.addEventListener('focus', showDropdown);
-      input.addEventListener('input', showDropdown);
-    }
-
-    function getItemImageKey(inputId, name) {
-      if (inputId.includes('survivor')) return `survivors_${name}`;
-      if (inputId.includes('killer')) return `killers_${name}`;
-      if (inputId.includes('map')) return `maps_${name}`;
-      if (inputId.includes('perk')) return `perks_${name}`;
-      return `${name}`;
+      input.onfocus = showDropdown;
+      input.oninput = showDropdown;
     }
 
     function closeAllDropdowns() {
       document.querySelectorAll('.custom-dropdown-list').forEach(d => d.classList.remove('active'));
     }
 
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.dropdown-container')) {
-        closeAllDropdowns();
-      }
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown-container')) closeAllDropdowns();
     });
 
-    function initAllDropdowns() {
-      setupCustomDropdown('survivor', 'drop-survivor', savedSurvivors);
-      setupCustomDropdown('killer', 'drop-killer', savedKillers);
-      setupCustomDropdown('map', 'drop-map', savedMaps);
-      setupCustomDropdown('perk1', 'drop-perk1', savedPerks);
-      setupCustomDropdown('perk2', 'drop-perk2', savedPerks);
-      setupCustomDropdown('perk3', 'drop-perk3', savedPerks);
-      setupCustomDropdown('perk4', 'drop-perk4', savedPerks);
-    }
-
-    /* Modal Catégories */
-    function openCategoryModal(type) {
-      activeCategoryType = type;
-      const titleMap = {
-        'survivors': '👤 Liste des Survivants',
-        'killers': '🔪 Liste des Tueurs',
-        'maps': '🗺️ Liste des Maps',
-        'perks': '⚡ Liste des Perks'
-      };
-      document.getElementById('cat-title').innerText = titleMap[type];
-      renderCategoryList();
-      document.getElementById('cat-modal').classList.add('active');
-    }
-
-    function renderCategoryList() {
-      const listEl = document.getElementById('cat-items-list');
-      listEl.innerHTML = '';
-      let targetArray = getArrayByType(activeCategoryType);
-
-      if (targetArray.length === 0) {
-        listEl.innerHTML = '<li style="color:var(--text-muted); font-size:0.8rem; padding:8px;">Aucun enregistrement pour le moment.</li>';
-        return;
-      }
-
-      targetArray.sort().forEach(item => {
-        const li = document.createElement('li');
-        li.className = 'saved-item';
-        const imgKey = `${activeCategoryType}_${item}`;
-        const imgSrc = savedImages[imgKey];
-        const imgHtml = imgSrc ? `<img src="${imgSrc}" class="img-thumb ${activeCategoryType === 'perks' ? 'square' : ''}"> ` : '';
-
-        li.innerHTML = `<div style="display:flex; align-items:center; gap:6px;">${imgHtml}<span>${escapeHtml(item)}</span></div><button onclick="removeCatItem('${escapeHtml(item)}')">✕</button>`;
-        listEl.appendChild(li);
-      });
-    }
-
-    function getArrayByType(type) {
-      if (type === 'survivors') return savedSurvivors;
-      if (type === 'killers') return savedKillers;
-      if (type === 'maps') return savedMaps;
-      if (type === 'perks') return savedPerks;
-      return [];
-    }
-
-    function addManualCatItem() {
-      const input = document.getElementById('new-cat-item');
-      const val = input.value.trim();
-      if (!val) return;
-      let targetArray = getArrayByType(activeCategoryType);
-
-      if (!targetArray.includes(val)) {
-        targetArray.push(val);
-        saveArrayByType(activeCategoryType);
-        initAllDropdowns();
-        renderCategoryList();
-      }
-      input.value = '';
-    }
-
-    function removeCatItem(item) {
-      let targetArray = getArrayByType(activeCategoryType);
-      const index = targetArray.indexOf(item);
-      if (index !== -1) {
-        targetArray.splice(index, 1);
-        saveArrayByType(activeCategoryType);
-        initAllDropdowns();
-        renderCategoryList();
-      }
-    }
-
-    function saveArrayByType(type) {
-      if (type === 'survivors') localStorage.setItem('dbd_saved_survivors', JSON.stringify(savedSurvivors));
-      if (type === 'killers') localStorage.setItem('dbd_saved_killers', JSON.stringify(savedKillers));
-      if (type === 'maps') localStorage.setItem('dbd_saved_maps', JSON.stringify(savedMaps));
-      if (type === 'perks') localStorage.setItem('dbd_saved_perks', JSON.stringify(savedPerks));
-    }
-
-    function openModal(editId = null) {
+    // Modal Opening & Form Build
+    function openMatchModal(editId = null) {
       document.getElementById('match-form').reset();
       document.getElementById('match-id').value = '';
-      document.getElementById('hook-1').checked = true;
-      closeAllDropdowns();
 
+      const roleFields = document.getElementById('form-role-fields');
+      const statsFields = document.getElementById('form-stats-fields');
+      const perkLabel = document.getElementById('perk-section-label');
+
+      if (currentRole === 'survivor') {
+        perkLabel.innerText = '⚡ Perks Survivant (4 Emplacements)';
+        roleFields.innerHTML = `
+          <div class="form-group dropdown-container">
+            <label for="form-survivor">Survivant joué</label>
+            <input type="text" id="form-survivor" placeholder="Sélectionnez..." autocomplete="off">
+            <div class="custom-dropdown-list" id="drop-form-survivor"></div>
+          </div>
+          <div class="form-group dropdown-container">
+            <label for="form-killer">Tueur affronté</label>
+            <input type="text" id="form-killer" required placeholder="Sélectionnez..." autocomplete="off">
+            <div class="custom-dropdown-list" id="drop-form-killer"></div>
+          </div>
+        `;
+
+        statsFields.innerHTML = `
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="flex:1;">
+              <label for="form-gens">Gens faits</label>
+              <input type="number" id="form-gens" min="0" max="5" value="5">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="form-escaped">Survivants partis</label>
+              <input type="number" id="form-escaped" min="0" max="4" value="1">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Résultat</label>
+            <div class="radio-group">
+              <div class="radio-option"><input type="radio" id="res-red" name="outcome" value="red" checked><label for="res-red">Mort 🔴</label></div>
+              <div class="radio-option"><input type="radio" id="res-orange" name="outcome" value="orange"><label for="res-orange">Trappe 🟠</label></div>
+              <div class="radio-option"><input type="radio" id="res-green" name="outcome" value="green"><label for="res-green">Porte 🟢</label></div>
+            </div>
+          </div>
+        `;
+      } else {
+        perkLabel.innerText = '⚡ Perks Tueur (4 Emplacements)';
+        roleFields.innerHTML = `
+          <div class="form-group dropdown-container">
+            <label for="form-killer">Tueur joué</label>
+            <input type="text" id="form-killer" required placeholder="Sélectionnez..." autocomplete="off">
+            <div class="custom-dropdown-list" id="drop-form-killer"></div>
+          </div>
+        `;
+
+        statsFields.innerHTML = `
+          <div class="form-group">
+            <label>Nombre de Kills (Kills faits)</label>
+            <div class="radio-group">
+              <div class="radio-option"><input type="radio" id="k-0" name="kills" value="0"><label for="k-0">0K 🤡</label></div>
+              <div class="radio-option"><input type="radio" id="k-1" name="kills" value="1"><label for="k-1">1K 🩸</label></div>
+              <div class="radio-option"><input type="radio" id="k-2" name="kills" value="2"><label for="k-2">2K ⚔️</label></div>
+              <div class="radio-option"><input type="radio" id="k-3" name="kills" value="3"><label for="k-3">3K 💀</label></div>
+              <div class="radio-option"><input type="radio" id="k-4" name="kills" value="4" checked><label for="k-4">4K ☠️</label></div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="flex:1;">
+              <label for="form-gens">Gens faits p/ surv</label>
+              <input type="number" id="form-gens" min="0" max="5" value="0">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="form-escaped">Survivants échappés</label>
+              <input type="number" id="form-escaped" min="0" max="4" value="0">
+            </div>
+          </div>
+        `;
+      }
+
+      // Setup dropdowns inside modal
+      setupCustomDropdown('form-map', 'drop-form-map', savedMaps, 'maps');
+      setupCustomDropdown('form-killer', 'drop-form-killer', savedKillers, 'killers');
+      if (currentRole === 'survivor') {
+        setupCustomDropdown('form-survivor', 'drop-form-survivor', savedSurvivors, 'survivors');
+      }
+
+      const activePerksList = currentRole === 'survivor' ? savedPerksSurv : savedPerksKiller;
+      const perkPrefix = currentRole === 'survivor' ? 'perks_surv' : 'perks_killer';
+      setupCustomDropdown('perk1', 'drop-perk1', activePerksList, perkPrefix);
+      setupCustomDropdown('perk2', 'drop-perk2', activePerksList, perkPrefix);
+      setupCustomDropdown('perk3', 'drop-perk3', activePerksList, perkPrefix);
+      setupCustomDropdown('perk4', 'drop-perk4', activePerksList, perkPrefix);
+
+      // Edit Mode Data Population
       if (editId) {
         const m = matches.find(x => x.id === editId);
         if (m) {
           document.getElementById('match-id').value = m.id;
-          document.getElementById('survivor').value = m.survivor || '';
-          document.getElementById('killer').value = m.killer || '';
-          document.getElementById('map').value = m.map || '';
-          document.getElementById('gens').value = m.gens;
-          document.getElementById('escaped').value = m.escaped;
-          document.getElementById('notes').value = m.notes || '';
-          document.querySelector(`input[name="status"][value="${m.status}"]`).checked = true;
-          
-          const hookVal = m.hooks !== undefined ? m.hooks : '1';
-          const hookRadio = document.querySelector(`input[name="hooks"][value="${hookVal}"]`);
-          if (hookRadio) hookRadio.checked = true;
+          document.getElementById('form-killer').value = m.killer || '';
+          document.getElementById('form-map').value = m.map || '';
+          document.getElementById('form-gens').value = m.gens || 0;
+          document.getElementById('form-escaped').value = m.escaped || 0;
+          document.getElementById('form-notes').value = m.notes || '';
+
+          if (m.role === 'survivor') {
+            document.getElementById('form-survivor').value = m.survivor || '';
+            const rad = document.querySelector(`input[name="outcome"][value="${m.outcome}"]`);
+            if (rad) rad.checked = true;
+          } else {
+            const rad = document.querySelector(`input[name="kills"][value="${m.kills}"]`);
+            if (rad) rad.checked = true;
+          }
 
           const p = m.perks || [];
           document.getElementById('perk1').value = p[0] || '';
@@ -928,8 +611,8 @@
           document.getElementById('perk4').value = p[3] || '';
         }
       }
-      initAllDropdowns();
-      document.getElementById('modal').classList.add('active');
+
+      document.getElementById('match-modal').classList.add('active');
     }
 
     function closeModal(id) {
@@ -937,17 +620,15 @@
       closeAllDropdowns();
     }
 
-    document.getElementById('match-form').addEventListener('submit', (e) => {
+    // Save Match
+    document.getElementById('match-form').onsubmit = (e) => {
       e.preventDefault();
       const id = document.getElementById('match-id').value;
-      const survivor = document.getElementById('survivor').value.trim();
-      const killer = document.getElementById('killer').value.trim() || 'Tueur Inconnu';
-      const map = document.getElementById('map').value.trim() || 'Map non spécifiée';
-      const gens = document.getElementById('gens').value;
-      const status = document.querySelector('input[name="status"]:checked').value;
-      const hooks = document.querySelector('input[name="hooks"]:checked').value;
-      const escaped = document.getElementById('escaped').value;
-      const notes = document.getElementById('notes').value.trim();
+      const killer = document.getElementById('form-killer').value.trim() || 'Tueur Inconnu';
+      const map = document.getElementById('form-map').value.trim() || 'Map Inconnue';
+      const gens = parseInt(document.getElementById('form-gens').value) || 0;
+      const escaped = parseInt(document.getElementById('form-escaped').value) || 0;
+      const notes = document.getElementById('form-notes').value.trim();
 
       const perks = [
         document.getElementById('perk1').value.trim(),
@@ -956,467 +637,388 @@
         document.getElementById('perk4').value.trim()
       ].filter(p => p !== '');
 
-      if (survivor && !savedSurvivors.includes(survivor)) { savedSurvivors.push(survivor); saveArrayByType('survivors'); }
-      if (killer && !savedKillers.includes(killer)) { savedKillers.push(killer); saveArrayByType('killers'); }
-      if (map && map !== 'Map non spécifiée' && !savedMaps.includes(map)) { savedMaps.push(map); saveArrayByType('maps'); }
-      perks.forEach(p => { if (!savedPerks.includes(p)) savedPerks.push(p); });
-      saveArrayByType('perks');
+      // Save new Auto-complete items
+      if (killer && !savedKillers.includes(killer)) { savedKillers.push(killer); localStorage.setItem('dbd_v4_killers', JSON.stringify(savedKillers)); }
+      if (map && map !== 'Map Inconnue' && !savedMaps.includes(map)) { savedMaps.push(map); localStorage.setItem('dbd_v4_maps', JSON.stringify(savedMaps)); }
+
+      let matchData = { id: id || Date.now().toString(), role: currentRole, killer, map, gens, escaped, notes, perks };
+
+      if (currentRole === 'survivor') {
+        const survivor = document.getElementById('form-survivor').value.trim();
+        const outcome = document.querySelector('input[name="outcome"]:checked').value;
+        if (survivor && !savedSurvivors.includes(survivor)) { savedSurvivors.push(survivor); localStorage.setItem('dbd_v4_survivors', JSON.stringify(savedSurvivors)); }
+        
+        perks.forEach(p => { if (!savedPerksSurv.includes(p)) savedPerksSurv.push(p); });
+        localStorage.setItem('dbd_v4_perks_surv', JSON.stringify(savedPerksSurv));
+
+        matchData.survivor = survivor;
+        matchData.outcome = outcome;
+      } else {
+        const kills = document.querySelector('input[name="kills"]:checked').value;
+        perks.forEach(p => { if (!savedPerksKiller.includes(p)) savedPerksKiller.push(p); });
+        localStorage.setItem('dbd_v4_perks_killer', JSON.stringify(savedPerksKiller));
+
+        matchData.kills = kills;
+      }
 
       if (id) {
         const idx = matches.findIndex(m => m.id === id);
-        if (idx !== -1) matches[idx] = { id, survivor, killer, map, gens, status, hooks, escaped, notes, perks };
+        if (idx !== -1) matches[idx] = matchData;
       } else {
-        matches.unshift({ id: Date.now().toString(), survivor, killer, map, gens, status, hooks, escaped, notes, perks });
+        matches.unshift(matchData);
       }
 
-      localStorage.setItem('dbd_matches', JSON.stringify(matches));
-      closeModal('modal');
+      localStorage.setItem('dbd_v4_matches', JSON.stringify(matches));
+      closeModal('match-modal');
       render();
-    });
+    };
 
     function deleteMatch(id) {
       if (confirm('Supprimer cette partie ?')) {
         matches = matches.filter(m => m.id !== id);
-        localStorage.setItem('dbd_matches', JSON.stringify(matches));
+        localStorage.setItem('dbd_v4_matches', JSON.stringify(matches));
         render();
       }
     }
 
-    function switchTab(tab, e) {
-      currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      if (e) e.currentTarget.classList.add('active');
-      render();
+    // Render Handler
+    function render() {
+      if (currentNavTab === 'matches') renderMatches();
+      if (currentNavTab === 'random') renderRandom();
+      if (currentNavTab === 'stats') renderStats();
+      if (currentNavTab === 'settings') renderSettings();
     }
 
-    function render() {
-      const matchContainer = document.getElementById('match-list');
-      const statsContainer = document.getElementById('stats-view');
-      const randomContainer = document.getElementById('random-view');
-      const settingsContainer = document.getElementById('settings-view');
+    // Render Matches List
+    function renderMatches() {
+      const container = document.getElementById('match-list');
+      const search = document.getElementById('search-bar').value.toLowerCase();
+      container.innerHTML = '';
 
-      matchContainer.style.display = 'none';
-      statsContainer.style.display = 'none';
-      randomContainer.style.display = 'none';
-      settingsContainer.style.display = 'none';
+      const roleMatches = matches.filter(m => m.role === currentRole);
 
-      if (currentTab === 'stats') {
-        statsContainer.style.display = 'flex';
-        renderStats();
-        return;
-      }
+      const filtered = roleMatches.filter(m => {
+        // Outcome filter
+        let passOutcome = false;
+        if (currentOutcomeFilter === 'all') passOutcome = true;
+        else if (currentRole === 'survivor') passOutcome = m.outcome === currentOutcomeFilter;
+        else if (currentRole === 'killer') passOutcome = m.kills === currentOutcomeFilter.replace('k', '');
 
-      if (currentTab === 'random') {
-        randomContainer.style.display = 'block';
-        renderRandomView();
-        return;
-      }
+        // Search filter
+        const passSearch = !search || 
+          m.killer.toLowerCase().includes(search) ||
+          m.map.toLowerCase().includes(search) ||
+          (m.survivor && m.survivor.toLowerCase().includes(search)) ||
+          (m.perks && m.perks.some(p => p.toLowerCase().includes(search)));
 
-      if (currentTab === 'settings') {
-        settingsContainer.style.display = 'block';
-        renderSettingsView();
-        return;
-      }
-
-      matchContainer.style.display = 'flex';
-
-      const searchQuery = document.getElementById('search-bar').value.toLowerCase();
-      matchContainer.innerHTML = '';
-
-      // Streak Render
-      const streakContainer = document.getElementById('streak-dots');
-      streakContainer.innerHTML = '';
-      const recentMatches = matches.slice(0, 10).reverse();
-      if (recentMatches.length === 0) {
-        streakContainer.innerHTML = '<span style="color:var(--text-muted); font-size:0.75rem;">Aucune partie</span>';
-      } else {
-        recentMatches.forEach(m => {
-          const dot = document.createElement('div');
-          dot.className = `streak-dot ${m.status}`;
-          dot.innerText = m.status === 'green' ? 'P' : m.status === 'orange' ? 'T' : 'X';
-          streakContainer.appendChild(dot);
-        });
-      }
-
-      const filtered = matches.filter(m => {
-        const matchesTab = (currentTab === 'all') || (m.status === currentTab);
-        const matchesSearch = !searchQuery || 
-          m.killer.toLowerCase().includes(searchQuery) ||
-          m.map.toLowerCase().includes(searchQuery) ||
-          (m.survivor && m.survivor.toLowerCase().includes(searchQuery)) ||
-          (m.perks && m.perks.some(p => p.toLowerCase().includes(searchQuery)));
-        return matchesTab && matchesSearch;
+        return passOutcome && passSearch;
       });
 
       if (filtered.length === 0) {
-        matchContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Aucun enregistrement.</div>';
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-size:0.85rem;">Aucun enregistrement trouvé.</div>';
         return;
       }
 
       filtered.forEach(m => {
         const card = document.createElement('div');
-        card.className = `match-card status-${m.status}`;
-        let statusText = m.status === 'green' ? '🟢 Porte' : m.status === 'orange' ? '🟠 Trappe' : '🔴 Mort';
+        card.className = 'match-card';
 
-        // Helper Image HTML
+        // Images
         const killerImg = savedImages[`killers_${m.killer}`];
         const killerImgHtml = killerImg ? `<img src="${killerImg}" class="img-thumb">` : '';
 
         const mapImg = savedImages[`maps_${m.map}`];
         const mapImgHtml = mapImg ? `<img src="${mapImg}" class="img-thumb square">` : '';
 
-        const survImg = m.survivor ? savedImages[`survivors_${m.survivor}`] : null;
-        const survImgHtml = survImg ? `<img src="${survImg}" class="img-thumb">` : '';
+        const perkPrefix = m.role === 'survivor' ? 'perks_surv' : 'perks_killer';
 
-        card.innerHTML = `
-          <div class="card-actions">
-            <button class="btn-icon" onclick="openModal('${m.id}')">✏️</button>
-            <button class="btn-icon" onclick="deleteMatch('${m.id}')">🗑️</button>
-          </div>
-          <div class="card-killer">🔪 ${killerImgHtml} ${escapeHtml(m.killer)}</div>
-          <div class="card-map">🗺️ ${mapImgHtml} ${escapeHtml(m.map)}</div>
-          <div class="card-details">
-            ${m.survivor ? `<span>👤 ${survImgHtml} <b>${escapeHtml(m.survivor)}</b></span>` : ''}
-            <span>⚡ Gen: <b>${m.gens}/5</b></span>
-            <span>🪝 Hooks: <b>${m.hooks !== undefined ? m.hooks : '-'}</b></span>
-            <span>Résultat: <b>${statusText}</b></span>
-          </div>
-          ${m.perks && m.perks.length > 0 ? `<div class="card-perks-list">${m.perks.map(p => {
-            const perkImg = savedImages[`perks_${p}`];
-            const perkImgHtml = perkImg ? `<img src="${perkImg}" class="img-thumb square">` : '';
-            return `<span class="card-perk-tag">${perkImgHtml}${escapeHtml(p)}</span>`;
-          }).join('')}</div>` : ''}
-        `;
-        matchContainer.appendChild(card);
-      });
-    }
+        if (m.role === 'survivor') {
+          const survImg = m.survivor ? savedImages[`survivors_${m.survivor}`] : null;
+          const survImgHtml = survImg ? `<img src="${survImg}" class="img-thumb">` : '';
+          const statusText = m.outcome === 'green' ? '🟢 Porte' : m.outcome === 'orange' ? '🟠 Trappe' : '🔴 Mort';
+          card.style.borderLeftColor = m.outcome === 'green' ? 'var(--accent-green)' : m.outcome === 'orange' ? 'var(--accent-orange)' : 'var(--accent-red)';
 
-    /* Rendu de l'Onglet Stats */
-    function renderStats() {
-      const statsContainer = document.getElementById('stats-view');
-      const total = matches.length;
-
-      if (total === 0) {
-        statsContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">Enregistrez quelques parties pour voir vos statistiques !</div>';
-        return;
-      }
-
-      const greenCount = matches.filter(m => m.status === 'green').length;
-      const orangeCount = matches.filter(m => m.status === 'orange').length;
-      const redCount = matches.filter(m => m.status === 'red').length;
-
-      const totalHooks = matches.reduce((acc, m) => acc + (parseInt(m.hooks) || 0), 0);
-      const avgHooks = (totalHooks / total).toFixed(1);
-
-      const escapeRate = (((greenCount + orangeCount) / total) * 100).toFixed(1);
-      const greenRate = ((greenCount / total) * 100).toFixed(1);
-      const orangeRate = ((orangeCount / total) * 100).toFixed(1);
-      const redRate = ((redCount / total) * 100).toFixed(1);
-
-      // Tueurs Stats
-      const killerCounts = {};
-      matches.forEach(m => {
-        const k = m.killer || 'Inconnu';
-        killerCounts[k] = (killerCounts[k] || 0) + 1;
-      });
-
-      const sortedKillers = Object.keys(killerCounts).sort((a, b) => killerCounts[b] - killerCounts[a]);
-
-      // Maps Stats
-      const mapCounts = {};
-      const mapEscapes = {};
-      matches.forEach(m => {
-        const map = m.map || 'Non spécifiée';
-        mapCounts[map] = (mapCounts[map] || 0) + 1;
-        if (m.status === 'green' || m.status === 'orange') {
-          mapEscapes[map] = (mapEscapes[map] || 0) + 1;
+          card.innerHTML = `
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openMatchModal('${m.id}')">✏️</button>
+              <button class="btn-icon" onclick="deleteMatch('${m.id}')">🗑️</button>
+            </div>
+            <div class="card-title">🔪 ${killerImgHtml} ${escapeHtml(m.killer)}</div>
+            <div class="card-sub">🗺️ ${mapImgHtml} ${escapeHtml(m.map)}</div>
+            <div class="card-details">
+              ${m.survivor ? `<span>👤 ${survImgHtml} <b>${escapeHtml(m.survivor)}</b></span>` : ''}
+              <span>⚡ Gen: <b>${m.gens}/5</b></span>
+              <span>Résultat: <b>${statusText}</b></span>
+            </div>
+            ${m.perks && m.perks.length > 0 ? `<div class="card-perks-list">${m.perks.map(p => {
+              const pImg = savedImages[`${perkPrefix}_${p}`];
+              const pImgHtml = pImg ? `<img src="${pImg}" class="img-thumb square">` : '';
+              return `<span class="card-perk-tag">${pImgHtml}${escapeHtml(p)}</span>`;
+            }).join('')}</div>` : ''}
+          `;
+        } else {
+          // Killer Match Card
+          card.style.borderLeftColor = m.kills === '4' ? 'var(--accent-red)' : m.kills === '3' ? 'var(--accent-orange)' : 'var(--accent-blue)';
+          
+          card.innerHTML = `
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openMatchModal('${m.id}')">✏️</button>
+              <button class="btn-icon" onclick="deleteMatch('${m.id}')">🗑️</button>
+            </div>
+            <div class="card-title">🔪 ${killerImgHtml} ${escapeHtml(m.killer)}</div>
+            <div class="card-sub">🗺️ ${mapImgHtml} ${escapeHtml(m.map)}</div>
+            <div class="card-details">
+              <span>☠️ Kills: <b style="color:var(--accent-red);">${m.kills}K</b></span>
+              <span>⚡ Gens faits: <b>${m.gens}/5</b></span>
+              <span>🏃 Échappés: <b>${m.escaped}</b></span>
+            </div>
+            ${m.perks && m.perks.length > 0 ? `<div class="card-perks-list">${m.perks.map(p => {
+              const pImg = savedImages[`${perkPrefix}_${p}`];
+              const pImgHtml = pImg ? `<img src="${pImg}" class="img-thumb square">` : '';
+              return `<span class="card-perk-tag">${pImgHtml}${escapeHtml(p)}</span>`;
+            }).join('')}</div>` : ''}
+          `;
         }
+
+        container.appendChild(card);
       });
-      const sortedMaps = Object.keys(mapCounts).sort((a, b) => mapCounts[b] - mapCounts[a]).slice(0, 5);
-
-      statsContainer.innerHTML = `
-        <div class="stat-card-grid">
-          <div class="stat-box">
-            <div class="stat-label">Total Parties</div>
-            <div class="stat-value" style="color:var(--accent-blue);">${total}</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">Évasion Globale</div>
-            <div class="stat-value" style="color:var(--accent-green);">${escapeRate}%</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">🟢 Taux Porte</div>
-            <div class="stat-value">${greenRate}%</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">🟠 Taux Trappe</div>
-            <div class="stat-value">${orangeRate}%</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">🔴 Taux Mort</div>
-            <div class="stat-value" style="color:var(--accent-red);">${redRate}%</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">🪝 Moy. Hooks / Match</div>
-            <div class="stat-value">${avgHooks}</div>
-          </div>
-        </div>
-
-        <div>
-          <div class="stat-section-title">🔪 Fréquence des Tueurs</div>
-          <table class="stat-table">
-            <thead>
-              <tr>
-                <th>Tueur</th>
-                <th>Rencontres</th>
-                <th>% Présence</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${sortedKillers.map(k => {
-                const count = killerCounts[k];
-                const pct = ((count / total) * 100).toFixed(1);
-                const img = savedImages[`killers_${k}`];
-                const imgHtml = img ? `<img src="${img}" class="img-thumb"> ` : '';
-                return `<tr><td>${imgHtml}<b>${escapeHtml(k)}</b></td><td>${count} fois</td><td>${pct}%</td></tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-
-        <div>
-          <div class="stat-section-title">🗺️ Top 5 Maps & Taux de Survie</div>
-          <table class="stat-table">
-            <thead>
-              <tr>
-                <th>Map</th>
-                <th>Jouées</th>
-                <th>Taux Survie</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${sortedMaps.map(m => {
-                const count = mapCounts[m];
-                const esc = mapEscapes[m] || 0;
-                const pct = ((esc / count) * 100).toFixed(0);
-                const img = savedImages[`maps_${m}`];
-                const imgHtml = img ? `<img src="${img}" class="img-thumb square"> ` : '';
-                return `<tr><td>${imgHtml}<b>${escapeHtml(m)}</b></td><td>${count}</td><td>${pct}%</td></tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
     }
 
-    /* Rendu Onglet Random */
-    function renderRandomView() {
-      const container = document.getElementById('random-view');
+    // Render Random View
+    function renderRandom() {
+      const container = document.getElementById('view-random');
+      const isSurv = currentRole === 'survivor';
+
       container.innerHTML = `
-        <div class="random-box">
-          <div class="random-title">🎲 Générateur de Build Aléatoire</div>
-          <div style="display:flex; gap:10px; margin-bottom:16px;">
-            <button class="btn-main" style="background:var(--accent-blue); margin:0;" onclick="generateRandom('survivor')">👤 Random Survivant</button>
-            <button class="btn-main" style="background:var(--accent-red); margin:0;" onclick="generateRandom('killer')">🔪 Random Tueur</button>
-          </div>
-          <div id="random-result" style="color:var(--text-muted); font-size:0.9rem;">Cliquez sur l'un des deux boutons ci-dessus pour générer un tirage au sort !</div>
+        <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:16px; text-align:center;">
+          <h3 style="margin-bottom:12px; font-size:1.1rem;">🎲 Tirage Aléatoire ${isSurv ? 'Survivant' : 'Tueur'}</h3>
+          <button class="btn-main" style="background:${isSurv ? 'var(--accent-blue)' : 'var(--accent-red)'}; margin-bottom:14px;" onclick="runRandomizer()">🚀 Tirer un Build Aléatoire</button>
+          <div id="random-result"></div>
         </div>
       `;
     }
 
-    function generateRandom(role) {
-      const resultDiv = document.getElementById('random-result');
-      const isSurv = role === 'survivor';
-      const charArray = isSurv ? savedSurvivors : savedKillers;
+    function runRandomizer() {
+      const resDiv = document.getElementById('random-result');
+      const isSurv = currentRole === 'survivor';
+      const charList = isSurv ? savedSurvivors : savedKillers;
+      const perkList = isSurv ? savedPerksSurv : savedPerksKiller;
+      const perkPrefix = isSurv ? 'perks_surv' : 'perks_killer';
 
-      if (charArray.length === 0) {
-        resultDiv.innerHTML = `<div style="color:var(--accent-red);">Aucun ${isSurv ? 'survivant' : 'tueur'} enregistré dans vos listes !</div>`;
+      if (charList.length === 0) {
+        resDiv.innerHTML = `<div style="color:var(--accent-red); font-size:0.85rem;">Aucun ${isSurv ? 'survivant' : 'tueur'} enregistré dans vos listes !</div>`;
         return;
       }
 
-      const randomChar = charArray[Math.floor(Math.random() * charArray.length)];
+      const randomChar = charList[Math.floor(Math.random() * charList.length)];
       const charImgKey = isSurv ? `survivors_${randomChar}` : `killers_${randomChar}`;
       const charImg = savedImages[charImgKey];
       const charImgHtml = charImg ? `<img src="${charImg}" class="img-thumb large">` : '';
 
-      // Shuffle & pick 4 perks
-      const shuffledPerks = [...savedPerks].sort(() => 0.5 - Math.random());
+      const shuffledPerks = [...perkList].sort(() => 0.5 - Math.random());
       const selectedPerks = shuffledPerks.slice(0, 4);
 
-      let perksHtml = '';
-      if (selectedPerks.length === 0) {
-        perksHtml = '<div style="grid-column:1/-1; color:var(--text-muted);">Aucune perk enregistrée.</div>';
-      } else {
-        perksHtml = selectedPerks.map(p => {
-          const perkImg = savedImages[`perks_${p}`];
-          const perkImgHtml = perkImg ? `<img src="${perkImg}" class="img-thumb square">` : '';
-          return `<div class="random-perk-card">${perkImgHtml}<span>${escapeHtml(p)}</span></div>`;
+      let perksHtml = selectedPerks.length === 0 ? '<div style="color:var(--text-muted); grid-column:1/-1;">Aucune perk dans la liste.</div>' :
+        selectedPerks.map(p => {
+          const pImg = savedImages[`${perkPrefix}_${p}`];
+          const pImgHtml = pImg ? `<img src="${pImg}" class="img-thumb square">` : '';
+          return `<div class="card-perk-tag" style="padding:6px; font-size:0.8rem;">${pImgHtml}<span>${escapeHtml(p)}</span></div>`;
         }).join('');
-      }
 
-      resultDiv.innerHTML = `
-        <div class="random-character">
+      resDiv.innerHTML = `
+        <div style="background:#0b0b0e; padding:10px; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:12px;">
           ${charImgHtml}
-          <span>${isSurv ? '👤' : '🔪'} ${escapeHtml(randomChar)}</span>
+          <span style="font-weight:bold; font-size:1.1rem;">${isSurv ? '👤' : '🔪'} ${escapeHtml(randomChar)}</span>
         </div>
-        <div style="font-size:0.8rem; text-transform:uppercase; color:var(--text-muted); text-align:left; font-weight:bold; margin-top:10px;">Perks Aléatoires :</div>
-        <div class="random-perks">
+        <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); text-align:left; font-weight:bold; margin-bottom:6px;">Perks Tirées :</div>
+        <div class="perks-grid">
           ${perksHtml}
         </div>
-        <button class="btn-secondary" style="margin-top:16px; width:100%;" onclick="generateRandom('${role}')">🔄 Relancer le tirage</button>
       `;
     }
 
-    /* Rendu Onglet Paramètres (Images) */
-    function renderSettingsView() {
-      const container = document.getElementById('settings-view');
-      const targetArray = getArrayByType(selectedSettingsType);
+    // Render Stats View
+    function renderStats() {
+      const container = document.getElementById('view-stats');
+      const roleMatches = matches.filter(m => m.role === currentRole);
+      const total = roleMatches.length;
 
+      if (total === 0) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">Aucune partie enregistrée dans ce mode.</div>';
+        return;
+      }
+
+      if (currentRole === 'survivor') {
+        const green = roleMatches.filter(m => m.outcome === 'green').length;
+        const orange = roleMatches.filter(m => m.outcome === 'orange').length;
+        const red = roleMatches.filter(m => m.outcome === 'red').length;
+        const escapeRate = (((green + orange) / total) * 100).toFixed(1);
+
+        container.innerHTML = `
+          <div class="stats-grid">
+            <div class="stat-box"><div class="stat-lbl">Parties</div><div class="stat-val" style="color:var(--accent-blue);">${total}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Survie</div><div class="stat-val" style="color:var(--accent-green);">${escapeRate}%</div></div>
+            <div class="stat-box"><div class="stat-lbl">🟢 Porte</div><div class="stat-val">${green}</div></div>
+            <div class="stat-box"><div class="stat-lbl">🔴 Mort</div><div class="stat-val" style="color:var(--accent-red);">${red}</div></div>
+          </div>
+        `;
+      } else {
+        const totalKills = roleMatches.reduce((acc, m) => acc + parseInt(m.kills), 0);
+        const avgKills = (totalKills / total).toFixed(1);
+        const k4 = roleMatches.filter(m => m.kills === '4').length;
+
+        container.innerHTML = `
+          <div class="stats-grid">
+            <div class="stat-box"><div class="stat-lbl">Parties Jouées</div><div class="stat-val" style="color:var(--accent-blue);">${total}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Moyenne Kills</div><div class="stat-val" style="color:var(--accent-red);">${avgKills} / 4</div></div>
+            <div class="stat-box"><div class="stat-lbl">Total Kills</div><div class="stat-val">${totalKills}</div></div>
+            <div class="stat-box"><div class="stat-lbl">4K Perfects</div><div class="stat-val" style="color:var(--accent-green);">${k4}</div></div>
+          </div>
+        `;
+      }
+    }
+
+    // Render Settings & Lists View
+    let activeSettingCategory = 'survivors';
+
+    function renderSettings() {
+      const container = document.getElementById('view-settings');
       container.innerHTML = `
-        <div class="settings-section">
-          <div class="stat-section-title">🖼️ Associer une photo / icône</div>
-          
-          <div class="type-btn-group">
-            <button class="type-btn ${selectedSettingsType==='survivors'?'active':''}" onclick="setSettingsType('survivors')">👤 Survivant</button>
-            <button class="type-btn ${selectedSettingsType==='killers'?'active':''}" onclick="setSettingsType('killers')">🔪 Tueur</button>
-            <button class="type-btn ${selectedSettingsType==='maps'?'active':''}" onclick="setSettingsType('maps')">🗺️ Map</button>
-            <button class="type-btn ${selectedSettingsType==='perks'?'active':''}" onclick="setSettingsType('perks')">⚡ Perk</button>
+        <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:12px; margin-bottom:12px;">
+          <h4 style="margin-bottom:8px; font-size:0.9rem;">🖼️ Gestion des Éléments & Photos</h4>
+          <div class="filter-bar" style="margin-bottom:10px;">
+            <button class="sub-filter-btn ${activeSettingCategory==='survivors'?'active':''}" onclick="setSettingCategory('survivors')">👤 Survs</button>
+            <button class="sub-filter-btn ${activeSettingCategory==='killers'?'active':''}" onclick="setSettingCategory('killers')">🔪 Tueurs</button>
+            <button class="sub-filter-btn ${activeSettingCategory==='maps'?'active':''}" onclick="setSettingCategory('maps')">🗺️ Maps</button>
+            <button class="sub-filter-btn ${activeSettingCategory==='perks_surv'?'active':''}" onclick="setSettingCategory('perks_surv')">⚡ Perks Surv</button>
+            <button class="sub-filter-btn ${activeSettingCategory==='perks_killer'?'active':''}" onclick="setSettingCategory('perks_killer')">⚡ Perks Tueur</button>
           </div>
 
-          <div class="form-group">
-            <label>Choisir une image</label>
-            <input type="file" id="setting-file-input" accept="image/*" onchange="previewImage(event)">
+          <div style="display:flex; gap:6px; margin-bottom:10px;">
+            <input type="text" id="manual-add-item" placeholder="Ajouter au catalogue..." style="flex:1; padding:8px; background:#0b0b0e; border:1px solid var(--border-color); color:#fff; border-radius:4px; font-size:14px;">
+            <button onclick="addManualItem()" style="background:var(--accent-green); color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold;">+</button>
           </div>
 
-          <div id="image-preview-container" style="display:none; text-align:center; margin-bottom:12px;">
-            <img id="image-preview" class="img-thumb large" style="object-fit:cover;">
-          </div>
-
-          <div class="form-group">
-            <label>Cible d'association</label>
-            <select id="setting-target-select">
-              <option value="">-- Sélectionner dans vos listes --</option>
-              ${targetArray.map(item => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join('')}
-            </select>
-          </div>
-
-          <button class="btn-main" style="background:var(--accent-green);" onclick="saveSettingsImage()">💾 Sauvegarder la photo</button>
-        </div>
-
-        <div class="settings-section">
-          <div class="stat-section-title">🖼️ Images déjà enregistrées</div>
-          <div id="saved-images-preview-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+          <ul class="saved-list" id="settings-items-list"></ul>
         </div>
       `;
 
-      renderSavedImagesList();
+      renderSettingsItemsList();
     }
 
-    let tempImageData = null;
-
-    function setSettingsType(type) {
-      selectedSettingsType = type;
-      renderSettingsView();
+    function setSettingCategory(cat) {
+      activeSettingCategory = cat;
+      renderSettings();
     }
 
-    function previewImage(event) {
+    function getListByCat(cat) {
+      if (cat === 'survivors') return savedSurvivors;
+      if (cat === 'killers') return savedKillers;
+      if (cat === 'maps') return savedMaps;
+      if (cat === 'perks_surv') return savedPerksSurv;
+      if (cat === 'perks_killer') return savedPerksKiller;
+      return [];
+    }
+
+    function renderSettingsItemsList() {
+      const listEl = document.getElementById('settings-items-list');
+      const list = getListByCat(activeSettingCategory);
+      listEl.innerHTML = '';
+
+      if (list.length === 0) {
+        listEl.innerHTML = '<li style="color:var(--text-muted); font-size:0.8rem; padding:6px;">Aucun élément enregistré.</li>';
+        return;
+      }
+
+      list.sort().forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'saved-item';
+        const imgKey = `${activeSettingCategory}_${item}`;
+        const imgSrc = savedImages[imgKey];
+        const imgHtml = imgSrc ? `<img src="${imgSrc}" class="img-thumb ${activeSettingCategory.includes('perks')||activeSettingCategory==='maps'?'square':''}"> ` : '';
+
+        li.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${imgHtml}
+            <span>${escapeHtml(item)}</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <label style="background:var(--accent-blue); color:white; padding:2px 6px; border-radius:4px; font-size:0.75rem; cursor:pointer;">
+              📷 <input type="file" accept="image/*" style="display:none;" onchange="uploadImageForItem('${escapeHtml(item)}', event)">
+            </label>
+            <button onclick="removeItem('${escapeHtml(item)}')" style="background:var(--accent-red); color:white; border:none; padding:2px 6px; border-radius:4px; cursor:pointer;">✕</button>
+          </div>
+        `;
+        listEl.appendChild(li);
+      });
+    }
+
+    function addManualItem() {
+      const val = document.getElementById('manual-add-item').value.trim();
+      if (!val) return;
+      const list = getListByCat(activeSettingCategory);
+      if (!list.includes(val)) {
+        list.push(val);
+        saveListByCat(activeSettingCategory);
+        renderSettingsItemsList();
+      }
+      document.getElementById('manual-add-item').value = '';
+    }
+
+    function removeItem(item) {
+      const list = getListByCat(activeSettingCategory);
+      const idx = list.indexOf(item);
+      if (idx !== -1) {
+        list.splice(idx, 1);
+        delete savedImages[`${activeSettingCategory}_${item}`];
+        localStorage.setItem('dbd_v4_images', JSON.stringify(savedImages));
+        saveListByCat(activeSettingCategory);
+        renderSettingsItemsList();
+      }
+    }
+
+    function uploadImageForItem(item, event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
-        // Redimensionnement automatique de l'image
+      reader.onload = (e) => {
         const img = new Image();
         img.src = e.target.result;
-        img.onload = function() {
+        img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxDim = 150;
-          let width = img.width;
-          let height = img.height;
+          const maxDim = 120;
+          let width = img.width, height = img.height;
 
-          if (width > height) {
-            if (width > maxDim) { height *= maxDim / width; width = maxDim; }
-          } else {
-            if (height > maxDim) { width *= maxDim / height; height = maxDim; }
-          }
+          if (width > height) { if (width > maxDim) { height *= maxDim / width; width = maxDim; } }
+          else { if (height > maxDim) { width *= maxDim / height; width = maxDim; } }
 
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = width; canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          tempImageData = canvas.toDataURL('image/jpeg', 0.85);
-          document.getElementById('image-preview').src = tempImageData;
-          document.getElementById('image-preview-container').style.display = 'block';
+          savedImages[`${activeSettingCategory}_${item}`] = canvas.toDataURL('image/jpeg', 0.85);
+          localStorage.setItem('dbd_v4_images', JSON.stringify(savedImages));
+          renderSettingsItemsList();
         };
       };
       reader.readAsDataURL(file);
     }
 
-    function saveSettingsImage() {
-      const target = document.getElementById('setting-target-select').value;
-      if (!tempImageData) {
-        alert('Veuillez sélectionner une image d\'abord !');
-        return;
-      }
-      if (!target) {
-        alert('Veuillez sélectionner à qui associer cette image !');
-        return;
-      }
-
-      const key = `${selectedSettingsType}_${target}`;
-      savedImages[key] = tempImageData;
-      localStorage.setItem('dbd_saved_images', JSON.stringify(savedImages));
-
-      tempImageData = null;
-      alert('Image sauvegardée avec succès !');
-      renderSettingsView();
+    function saveListByCat(cat) {
+      if (cat === 'survivors') localStorage.setItem('dbd_v4_survivors', JSON.stringify(savedSurvivors));
+      if (cat === 'killers') localStorage.setItem('dbd_v4_killers', JSON.stringify(savedKillers));
+      if (cat === 'maps') localStorage.setItem('dbd_v4_maps', JSON.stringify(savedMaps));
+      if (cat === 'perks_surv') localStorage.setItem('dbd_v4_perks_surv', JSON.stringify(savedPerksSurv));
+      if (cat === 'perks_killer') localStorage.setItem('dbd_v4_perks_killer', JSON.stringify(savedPerksKiller));
     }
 
-    function renderSavedImagesList() {
-      const listEl = document.getElementById('saved-images-preview-list');
-      if (!listEl) return;
-      listEl.innerHTML = '';
-
-      const keys = Object.keys(savedImages);
-      if (keys.length === 0) {
-        listEl.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem;">Aucune image enregistrée.</div>';
-        return;
-      }
-
-      keys.forEach(k => {
-        const parts = k.split('_');
-        const type = parts[0];
-        const name = parts.slice(1).join('_');
-
-        const item = document.createElement('div');
-        item.className = 'saved-item';
-        item.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px;">
-            <img src="${savedImages[k]}" class="img-thumb ${type === 'perks' || type === 'maps' ? 'square' : ''}">
-            <span style="font-size:0.85rem;">[${type}] <b>${escapeHtml(name)}</b></span>
-          </div>
-          <button onclick="removeSettingsImage('${k}')">✕</button>
-        `;
-        listEl.appendChild(item);
-      });
+    function escapeHtml(str) {
+      return str ? str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) : '';
     }
 
-    function removeSettingsImage(key) {
-      if (confirm('Supprimer cette image ?')) {
-        delete savedImages[key];
-        localStorage.setItem('dbd_saved_images', JSON.stringify(savedImages));
-        renderSettingsView();
-      }
-    }
-
-    function escapeHtml(text) {
-      if (!text) return '';
-      return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-    }
-
-    // Init App
-    initAllDropdowns();
+    // Init
+    setupSubFilterBar();
     render();
   </script>
 </body>
