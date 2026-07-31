@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DBD Match Tracker V2</title>
+  <title>DBD Match Tracker V3</title>
   <style>
     :root {
       --bg-color: #0a0a0c;
@@ -13,6 +13,7 @@
       --accent-orange: #e67e22;
       --accent-green: #2ecc71;
       --accent-blue: #3498db;
+      --accent-purple: #9b59b6;
       --text-color: #e0e0e0;
       --text-muted: #8e8e99;
       --border-color: #262630;
@@ -374,21 +375,21 @@
       background: none; border: none; color: var(--text-muted); cursor: pointer;
     }
 
-    .card-killer { font-size: 1rem; font-weight: bold; color: #fff; }
-    .card-map { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
+    .card-killer { font-size: 1rem; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px; }
+    .card-map { font-size: 0.8rem; color: var(--text-muted); font-style: italic; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
 
     .card-details {
       display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; margin: 6px 0; color: #ccc;
-      background: #0b0b0e; padding: 6px 8px; border-radius: 6px;
+      background: #0b0b0e; padding: 6px 8px; border-radius: 6px; align-items: center;
     }
 
     .card-perks-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
     .card-perk-tag {
       background: var(--perk-bg); border: 1px solid var(--perk-border); color: #d1c4e9;
-      padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;
+      padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;
     }
 
-    /* Stats Dashboard Styles */
+    /* Stats & Custom Views */
     .stats-dashboard {
       display: flex;
       flex-direction: column;
@@ -477,6 +478,100 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
+    /* Thumbnail Images */
+    .img-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+      vertical-align: middle;
+      border: 1px solid var(--border-color);
+    }
+    .img-thumb.square {
+      border-radius: 4px;
+    }
+    .img-thumb.large {
+      width: 50px;
+      height: 50px;
+    }
+
+    /* Random View Elements */
+    .random-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .random-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .random-character {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background: #0b0b0e;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .random-perks {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .random-perk-card {
+      background: var(--perk-bg);
+      border: 1px solid var(--perk-border);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Settings View Elements */
+    .settings-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .type-btn-group {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .type-btn {
+      flex: 1;
+      padding: 6px;
+      background: #0b0b0e;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      border-radius: 4px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      text-align: center;
+    }
+    .type-btn.active {
+      background: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
   </style>
 </head>
 <body>
@@ -512,12 +607,16 @@
     <button class="tab-btn" onclick="switchTab('orange', event)">🟠 Trappe</button>
     <button class="tab-btn" onclick="switchTab('red', event)">🔴 Non sorti</button>
     <button class="tab-btn" style="border-color: var(--accent-blue); color: var(--accent-blue);" onclick="switchTab('stats', event)">📊 Stats</button>
+    <button class="tab-btn" style="border-color: var(--accent-purple); color: var(--accent-purple);" onclick="switchTab('random', event)">🎲 Random</button>
+    <button class="tab-btn" style="border-color: var(--text-muted); color: var(--text-color);" onclick="switchTab('settings', event)">⚙️ Paramètres</button>
   </div>
 
-  <!-- Main View (Matches List OR Stats) -->
+  <!-- Main View -->
   <div id="main-container">
     <div id="match-list" class="match-list"></div>
     <div id="stats-view" class="stats-dashboard" style="display: none;"></div>
+    <div id="random-view" style="display: none;"></div>
+    <div id="settings-view" style="display: none;"></div>
   </div>
 
   <!-- Modal Form Add/Edit -->
@@ -641,9 +740,11 @@
     let savedSurvivors = JSON.parse(localStorage.getItem('dbd_saved_survivors')) || [];
     let savedKillers = JSON.parse(localStorage.getItem('dbd_saved_killers')) || [];
     let savedMaps = JSON.parse(localStorage.getItem('dbd_saved_maps')) || [];
+    let savedImages = JSON.parse(localStorage.getItem('dbd_saved_images')) || {};
 
     let currentTab = 'all';
     let activeCategoryType = '';
+    let selectedSettingsType = 'survivors';
 
     // Règle 0 accrochage = Mort automatique
     function handleHookChange(val) {
@@ -672,7 +773,12 @@
         matchingItems.sort().forEach(item => {
           const div = document.createElement('div');
           div.className = 'dropdown-item';
-          div.innerText = item;
+          
+          const imgKey = getItemImageKey(inputId, item);
+          const imgSrc = savedImages[imgKey];
+          const imgHtml = imgSrc ? `<img src="${imgSrc}" class="img-thumb ${inputId.includes('perk') ? 'square' : ''}"> ` : '';
+          
+          div.innerHTML = `${imgHtml}${escapeHtml(item)}`;
           div.onmousedown = function(e) {
             e.preventDefault();
             input.value = item;
@@ -686,6 +792,14 @@
 
       input.addEventListener('focus', showDropdown);
       input.addEventListener('input', showDropdown);
+    }
+
+    function getItemImageKey(inputId, name) {
+      if (inputId.includes('survivor')) return `survivors_${name}`;
+      if (inputId.includes('killer')) return `killers_${name}`;
+      if (inputId.includes('map')) return `maps_${name}`;
+      if (inputId.includes('perk')) return `perks_${name}`;
+      return `${name}`;
     }
 
     function closeAllDropdowns() {
@@ -735,7 +849,11 @@
       targetArray.sort().forEach(item => {
         const li = document.createElement('li');
         li.className = 'saved-item';
-        li.innerHTML = `<span>${escapeHtml(item)}</span><button onclick="removeCatItem('${escapeHtml(item)}')">✕</button>`;
+        const imgKey = `${activeCategoryType}_${item}`;
+        const imgSrc = savedImages[imgKey];
+        const imgHtml = imgSrc ? `<img src="${imgSrc}" class="img-thumb ${activeCategoryType === 'perks' ? 'square' : ''}"> ` : '';
+
+        li.innerHTML = `<div style="display:flex; align-items:center; gap:6px;">${imgHtml}<span>${escapeHtml(item)}</span></div><button onclick="removeCatItem('${escapeHtml(item)}')">✕</button>`;
         listEl.appendChild(li);
       });
     }
@@ -874,16 +992,33 @@
     function render() {
       const matchContainer = document.getElementById('match-list');
       const statsContainer = document.getElementById('stats-view');
+      const randomContainer = document.getElementById('random-view');
+      const settingsContainer = document.getElementById('settings-view');
+
+      matchContainer.style.display = 'none';
+      statsContainer.style.display = 'none';
+      randomContainer.style.display = 'none';
+      settingsContainer.style.display = 'none';
 
       if (currentTab === 'stats') {
-        matchContainer.style.display = 'none';
         statsContainer.style.display = 'flex';
         renderStats();
         return;
       }
 
+      if (currentTab === 'random') {
+        randomContainer.style.display = 'block';
+        renderRandomView();
+        return;
+      }
+
+      if (currentTab === 'settings') {
+        settingsContainer.style.display = 'block';
+        renderSettingsView();
+        return;
+      }
+
       matchContainer.style.display = 'flex';
-      statsContainer.style.display = 'none';
 
       const searchQuery = document.getElementById('search-bar').value.toLowerCase();
       matchContainer.innerHTML = '';
@@ -923,20 +1058,34 @@
         card.className = `match-card status-${m.status}`;
         let statusText = m.status === 'green' ? '🟢 Porte' : m.status === 'orange' ? '🟠 Trappe' : '🔴 Mort';
 
+        // Helper Image HTML
+        const killerImg = savedImages[`killers_${m.killer}`];
+        const killerImgHtml = killerImg ? `<img src="${killerImg}" class="img-thumb">` : '';
+
+        const mapImg = savedImages[`maps_${m.map}`];
+        const mapImgHtml = mapImg ? `<img src="${mapImg}" class="img-thumb square">` : '';
+
+        const survImg = m.survivor ? savedImages[`survivors_${m.survivor}`] : null;
+        const survImgHtml = survImg ? `<img src="${survImg}" class="img-thumb">` : '';
+
         card.innerHTML = `
           <div class="card-actions">
             <button class="btn-icon" onclick="openModal('${m.id}')">✏️</button>
             <button class="btn-icon" onclick="deleteMatch('${m.id}')">🗑️</button>
           </div>
-          <div class="card-killer">🔪 ${escapeHtml(m.killer)}</div>
-          <div class="card-map">🗺️ ${escapeHtml(m.map)}</div>
+          <div class="card-killer">🔪 ${killerImgHtml} ${escapeHtml(m.killer)}</div>
+          <div class="card-map">🗺️ ${mapImgHtml} ${escapeHtml(m.map)}</div>
           <div class="card-details">
-            ${m.survivor ? `<span>👤 <b>${escapeHtml(m.survivor)}</b></span>` : ''}
+            ${m.survivor ? `<span>👤 ${survImgHtml} <b>${escapeHtml(m.survivor)}</b></span>` : ''}
             <span>⚡ Gen: <b>${m.gens}/5</b></span>
             <span>🪝 Hooks: <b>${m.hooks !== undefined ? m.hooks : '-'}</b></span>
             <span>Résultat: <b>${statusText}</b></span>
           </div>
-          ${m.perks && m.perks.length > 0 ? `<div class="card-perks-list">${m.perks.map(p => `<span class="card-perk-tag">${escapeHtml(p)}</span>`).join('')}</div>` : ''}
+          ${m.perks && m.perks.length > 0 ? `<div class="card-perks-list">${m.perks.map(p => {
+            const perkImg = savedImages[`perks_${p}`];
+            const perkImgHtml = perkImg ? `<img src="${perkImg}" class="img-thumb square">` : '';
+            return `<span class="card-perk-tag">${perkImgHtml}${escapeHtml(p)}</span>`;
+          }).join('')}</div>` : ''}
         `;
         matchContainer.appendChild(card);
       });
@@ -1027,7 +1176,9 @@
               ${sortedKillers.map(k => {
                 const count = killerCounts[k];
                 const pct = ((count / total) * 100).toFixed(1);
-                return `<tr><td><b>${escapeHtml(k)}</b></td><td>${count} fois</td><td>${pct}%</td></tr>`;
+                const img = savedImages[`killers_${k}`];
+                const imgHtml = img ? `<img src="${img}" class="img-thumb"> ` : '';
+                return `<tr><td>${imgHtml}<b>${escapeHtml(k)}</b></td><td>${count} fois</td><td>${pct}%</td></tr>`;
               }).join('')}
             </tbody>
           </table>
@@ -1048,12 +1199,215 @@
                 const count = mapCounts[m];
                 const esc = mapEscapes[m] || 0;
                 const pct = ((esc / count) * 100).toFixed(0);
-                return `<tr><td><b>${escapeHtml(m)}</b></td><td>${count}</td><td>${pct}%</td></tr>`;
+                const img = savedImages[`maps_${m}`];
+                const imgHtml = img ? `<img src="${img}" class="img-thumb square"> ` : '';
+                return `<tr><td>${imgHtml}<b>${escapeHtml(m)}</b></td><td>${count}</td><td>${pct}%</td></tr>`;
               }).join('')}
             </tbody>
           </table>
         </div>
       `;
+    }
+
+    /* Rendu Onglet Random */
+    function renderRandomView() {
+      const container = document.getElementById('random-view');
+      container.innerHTML = `
+        <div class="random-box">
+          <div class="random-title">🎲 Générateur de Build Aléatoire</div>
+          <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <button class="btn-main" style="background:var(--accent-blue); margin:0;" onclick="generateRandom('survivor')">👤 Random Survivant</button>
+            <button class="btn-main" style="background:var(--accent-red); margin:0;" onclick="generateRandom('killer')">🔪 Random Tueur</button>
+          </div>
+          <div id="random-result" style="color:var(--text-muted); font-size:0.9rem;">Cliquez sur l'un des deux boutons ci-dessus pour générer un tirage au sort !</div>
+        </div>
+      `;
+    }
+
+    function generateRandom(role) {
+      const resultDiv = document.getElementById('random-result');
+      const isSurv = role === 'survivor';
+      const charArray = isSurv ? savedSurvivors : savedKillers;
+
+      if (charArray.length === 0) {
+        resultDiv.innerHTML = `<div style="color:var(--accent-red);">Aucun ${isSurv ? 'survivant' : 'tueur'} enregistré dans vos listes !</div>`;
+        return;
+      }
+
+      const randomChar = charArray[Math.floor(Math.random() * charArray.length)];
+      const charImgKey = isSurv ? `survivors_${randomChar}` : `killers_${randomChar}`;
+      const charImg = savedImages[charImgKey];
+      const charImgHtml = charImg ? `<img src="${charImg}" class="img-thumb large">` : '';
+
+      // Shuffle & pick 4 perks
+      const shuffledPerks = [...savedPerks].sort(() => 0.5 - Math.random());
+      const selectedPerks = shuffledPerks.slice(0, 4);
+
+      let perksHtml = '';
+      if (selectedPerks.length === 0) {
+        perksHtml = '<div style="grid-column:1/-1; color:var(--text-muted);">Aucune perk enregistrée.</div>';
+      } else {
+        perksHtml = selectedPerks.map(p => {
+          const perkImg = savedImages[`perks_${p}`];
+          const perkImgHtml = perkImg ? `<img src="${perkImg}" class="img-thumb square">` : '';
+          return `<div class="random-perk-card">${perkImgHtml}<span>${escapeHtml(p)}</span></div>`;
+        }).join('');
+      }
+
+      resultDiv.innerHTML = `
+        <div class="random-character">
+          ${charImgHtml}
+          <span>${isSurv ? '👤' : '🔪'} ${escapeHtml(randomChar)}</span>
+        </div>
+        <div style="font-size:0.8rem; text-transform:uppercase; color:var(--text-muted); text-align:left; font-weight:bold; margin-top:10px;">Perks Aléatoires :</div>
+        <div class="random-perks">
+          ${perksHtml}
+        </div>
+        <button class="btn-secondary" style="margin-top:16px; width:100%;" onclick="generateRandom('${role}')">🔄 Relancer le tirage</button>
+      `;
+    }
+
+    /* Rendu Onglet Paramètres (Images) */
+    function renderSettingsView() {
+      const container = document.getElementById('settings-view');
+      const targetArray = getArrayByType(selectedSettingsType);
+
+      container.innerHTML = `
+        <div class="settings-section">
+          <div class="stat-section-title">🖼️ Associer une photo / icône</div>
+          
+          <div class="type-btn-group">
+            <button class="type-btn ${selectedSettingsType==='survivors'?'active':''}" onclick="setSettingsType('survivors')">👤 Survivant</button>
+            <button class="type-btn ${selectedSettingsType==='killers'?'active':''}" onclick="setSettingsType('killers')">🔪 Tueur</button>
+            <button class="type-btn ${selectedSettingsType==='maps'?'active':''}" onclick="setSettingsType('maps')">🗺️ Map</button>
+            <button class="type-btn ${selectedSettingsType==='perks'?'active':''}" onclick="setSettingsType('perks')">⚡ Perk</button>
+          </div>
+
+          <div class="form-group">
+            <label>Choisir une image</label>
+            <input type="file" id="setting-file-input" accept="image/*" onchange="previewImage(event)">
+          </div>
+
+          <div id="image-preview-container" style="display:none; text-align:center; margin-bottom:12px;">
+            <img id="image-preview" class="img-thumb large" style="object-fit:cover;">
+          </div>
+
+          <div class="form-group">
+            <label>Cible d'association</label>
+            <select id="setting-target-select">
+              <option value="">-- Sélectionner dans vos listes --</option>
+              ${targetArray.map(item => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join('')}
+            </select>
+          </div>
+
+          <button class="btn-main" style="background:var(--accent-green);" onclick="saveSettingsImage()">💾 Sauvegarder la photo</button>
+        </div>
+
+        <div class="settings-section">
+          <div class="stat-section-title">🖼️ Images déjà enregistrées</div>
+          <div id="saved-images-preview-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+        </div>
+      `;
+
+      renderSavedImagesList();
+    }
+
+    let tempImageData = null;
+
+    function setSettingsType(type) {
+      selectedSettingsType = type;
+      renderSettingsView();
+    }
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Redimensionnement automatique de l'image
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 150;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+          } else {
+            if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          tempImageData = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('image-preview').src = tempImageData;
+          document.getElementById('image-preview-container').style.display = 'block';
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveSettingsImage() {
+      const target = document.getElementById('setting-target-select').value;
+      if (!tempImageData) {
+        alert('Veuillez sélectionner une image d\'abord !');
+        return;
+      }
+      if (!target) {
+        alert('Veuillez sélectionner à qui associer cette image !');
+        return;
+      }
+
+      const key = `${selectedSettingsType}_${target}`;
+      savedImages[key] = tempImageData;
+      localStorage.setItem('dbd_saved_images', JSON.stringify(savedImages));
+
+      tempImageData = null;
+      alert('Image sauvegardée avec succès !');
+      renderSettingsView();
+    }
+
+    function renderSavedImagesList() {
+      const listEl = document.getElementById('saved-images-preview-list');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      const keys = Object.keys(savedImages);
+      if (keys.length === 0) {
+        listEl.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem;">Aucune image enregistrée.</div>';
+        return;
+      }
+
+      keys.forEach(k => {
+        const parts = k.split('_');
+        const type = parts[0];
+        const name = parts.slice(1).join('_');
+
+        const item = document.createElement('div');
+        item.className = 'saved-item';
+        item.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+            <img src="${savedImages[k]}" class="img-thumb ${type === 'perks' || type === 'maps' ? 'square' : ''}">
+            <span style="font-size:0.85rem;">[${type}] <b>${escapeHtml(name)}</b></span>
+          </div>
+          <button onclick="removeSettingsImage('${k}')">✕</button>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function removeSettingsImage(key) {
+      if (confirm('Supprimer cette image ?')) {
+        delete savedImages[key];
+        localStorage.setItem('dbd_saved_images', JSON.stringify(savedImages));
+        renderSettingsView();
+      }
     }
 
     function escapeHtml(text) {
