@@ -54,7 +54,7 @@
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 4px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .mode-btn {
@@ -79,6 +79,58 @@
     .mode-btn.active-killer {
       background: var(--accent-red);
       color: #fff;
+    }
+
+    /* 10 Last Games Recap Banner */
+    .recent-games-banner {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .recent-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .recent-dots-container {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .recent-dot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: #0b0b0e;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .recent-dot:hover {
+      transform: scale(1.1);
+      border-color: #fff;
     }
 
     /* Main Navigation Tabs */
@@ -293,6 +345,15 @@
     <button id="mode-killer-btn" class="mode-btn" onclick="switchRoleMode('killer')">🔪 Mode Tueur</button>
   </div>
 
+  <!-- 10 Last Games Recap Banner -->
+  <div class="recent-games-banner">
+    <div class="recent-header">
+      <span>⌛ 10 Dernières Games</span>
+      <span id="recent-count-label" style="font-size:0.65rem; color:var(--accent-blue);">0 game</span>
+    </div>
+    <div class="recent-dots-container" id="recent-dots-list"></div>
+  </div>
+
   <!-- Main Nav Tabs -->
   <div class="nav-tabs">
     <button class="nav-btn active" onclick="switchNavTab('matches', event)">🎮 Matchs</button>
@@ -436,6 +497,57 @@
       document.getElementById('view-settings').style.display = tab === 'settings' ? 'block' : 'none';
 
       render();
+    }
+
+    // Render Recent 10 Games Banner
+    function renderRecentGamesBanner() {
+      const container = document.getElementById('recent-dots-list');
+      const countLabel = document.getElementById('recent-count-label');
+      container.innerHTML = '';
+
+      const roleMatches = matches.filter(m => m.role === currentRole);
+      const recent10 = roleMatches.slice(0, 10);
+
+      countLabel.innerText = `${recent10.length} sur ${roleMatches.length} games`;
+      countLabel.style.color = currentRole === 'survivor' ? 'var(--accent-blue)' : 'var(--accent-red)';
+
+      if (recent10.length === 0) {
+        container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">Aucune game enregistrée.</span>';
+        return;
+      }
+
+      recent10.forEach((m, idx) => {
+        const dot = document.createElement('div');
+        dot.className = 'recent-dot';
+
+        let icon = '';
+        let title = '';
+
+        if (currentRole === 'survivor') {
+          if (m.outcome === 'green') { icon = '🟢'; title = 'Porte'; }
+          else if (m.outcome === 'orange') { icon = '🟠'; title = 'Trappe'; }
+          else { icon = '🔴'; title = 'Mort'; }
+          title += ` vs ${m.killer}`;
+        } else {
+          if (m.kills === '4') icon = '☠️';
+          else if (m.kills === '3') icon = '💀';
+          else if (m.kills === '2') icon = '⚔️';
+          else if (m.kills === '1') icon = '🩸';
+          else icon = '🤡';
+          title = `${m.kills}K avec ${m.killer}`;
+        }
+
+        dot.innerHTML = icon;
+        dot.title = `Game #${recent10.length - idx} - ${title}`;
+        dot.onclick = () => {
+          if (currentNavTab !== 'matches') {
+            switchNavTab('matches');
+          }
+          openMatchModal(m.id);
+        };
+
+        container.appendChild(dot);
+      });
     }
 
     // Outcome Filter Sub-Bar
@@ -708,6 +820,7 @@
 
     // Render Handler
     function render() {
+      renderRecentGamesBanner();
       if (currentNavTab === 'matches') renderMatches();
       if (currentNavTab === 'random') renderRandom();
       if (currentNavTab === 'stats') renderStats();
@@ -1183,7 +1296,6 @@
       }
     }
 
-    // Improved Image Resizing & Cropping to keep Face centered
     function uploadImageForItem(item, event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1199,19 +1311,16 @@
           canvas.height = maxDim;
           const ctx = canvas.getContext('2d');
 
-          // Check if Perks/Maps (Full Square Crop) or Person (Top-Centered Crop for Face)
           const isSquareType = activeSettingCategory.includes('perks') || activeSettingCategory === 'maps';
 
           let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
 
           if (img.width > img.height) {
-            // Horizontal image: crop center
             srcWidth = img.height;
             srcX = (img.width - img.height) / 2;
           } else {
-            // Vertical image (like character portraits): crop square from top/face
             srcHeight = img.width;
-            srcY = isSquareType ? (img.height - img.width) / 2 : 0; // Top for characters, middle for perks
+            srcY = isSquareType ? (img.height - img.width) / 2 : 0;
           }
 
           ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, 0, 0, maxDim, maxDim);
